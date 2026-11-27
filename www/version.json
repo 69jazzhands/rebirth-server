@@ -1,6 +1,6 @@
 {
-"version": "0.9.4",
-"build": 202611271310,
+"version": "0.9.5",
+"build": 202611271412,
 "files": {
 "MODDING.md": [
 9109,
@@ -355,8 +355,8 @@
 "ea9a0035c58b65fbb51dd5224b9dda848ccfec5f6b41b24949d34e03aeef94de"
 ],
 "index.html": [
-453805,
-"57a320e19f9340253eac11752fb603df1b14cec7f65fdbf61a603a31e6a69fbd"
+454348,
+"7ae04a65c05610dc7563a67a0f3dd5e9f229aa23253f2043f9bf90fe4d5977a8"
 ],
 "lib/basis/basis_transcoder.js": [
 57529,

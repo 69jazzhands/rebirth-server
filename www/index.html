@@ -4774,7 +4774,7 @@ Rebirth.start(function () {
   function nkFreshSession() {
     var ses = NK.session, now = Date.now() / 1000;
     if (!ses.isexpired(now + 60)) return Promise.resolve(ses);
-    return NK.client.sessionRefresh(ses).then(function (s2) { NK.session = s2; try { localStorage.setItem('rebirthSession', JSON.stringify({ t: s2.token, r: s2.refresh_token })); } catch (e) {} return s2; });
+    return NK.client.sessionRefresh(ses).then(function (s2) { NK.session = s2; nkShare(); try { localStorage.setItem('rebirthSession', JSON.stringify({ t: s2.token, r: s2.refresh_token })); } catch (e) {} return s2; });
   }
   function nkSetStatus() {
     if (!NK.socket || !NET.conn) return;
@@ -4791,7 +4791,7 @@ Rebirth.start(function () {
       NK.client = new window.nakamajs.Client(window.REBIRTH_SERVER_KEY || 'rebirth-client-key', u.hostname, port, NK.ssl, 10000, true);
       return nkAuth(NK.client);
     }).then(function (ses) {
-      NK.session = ses; NK.me = ses.user_id; NK.code = ses.username;
+      NK.session = ses; NK.me = ses.user_id; NK.code = ses.username; nkShare();
       NK.client.updateAccount(ses, { display_name: myName }).catch(function () {});
       return nkSocket();
     }).then(function () { NET.conn = true; return nkJoin('rebirth-world'); }).then(function (room) {
@@ -4811,6 +4811,12 @@ Rebirth.start(function () {
       if (on.length && NK.socket) return NK.socket.followUsers(on).then(function (st) { (st.presences || []).forEach(function (p) { NK.status[p.user_id] = nkDecode(p.status) || {}; }); });
     }).then(function () { if (menuOpen()) renderFriends(); }, function () {});
   }
+  // Android app: it checks for invites while the game is in the background, so it needs the sign-in
+  function nkShare() {
+    if (!window.RebirthAndroid || !window.RebirthAndroid.setSession || !NK.session) return;
+    try { window.RebirthAndroid.setSession(nkServer(), NK.session.token, NK.session.refresh_token || '', window.REBIRTH_SERVER_KEY || 'rebirth-client-key'); } catch (e) {}
+  }
+  window.rebirthInvite = function (c) { if (c && c.room) nkNote({ code: 101, content: c }); };   // a tapped invite notification
   function nkNote(n) {
     if (!n || n.code !== 101) return;
     var c = typeof n.content === 'string' ? nkDecode(n.content) : n.content; if (!c || !c.room) return;

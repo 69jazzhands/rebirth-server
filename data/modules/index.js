@@ -21,7 +21,7 @@ function rpcInvite(ctx, logger, nk, payload) {
   }
   if (!ok) throw Error('you can only invite friends');
   var room = String(req.room || '').slice(0, 40), name = String(req.name || '').slice(0, 18);
-  nk.notificationSend(to, name + ' invited you to their game', { room: room, from: ctx.userId, name: name, plat: String(req.plat || '').slice(0, 12) }, INVITE_CODE, ctx.userId, false);
+  nk.notificationSend(to, name + ' invited you to their game', { room: room, from: ctx.userId, name: name, plat: String(req.plat || '').slice(0, 12) }, INVITE_CODE, ctx.userId, true);   // kept until read, so the phone app can notify players who aren't in the game
   return JSON.stringify({ sent: true });
 }
 
