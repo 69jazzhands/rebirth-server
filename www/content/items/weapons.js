@@ -4,14 +4,15 @@
 //       pickup = rounds in an ammo box found on the street, model = [length, has magazine 0/1], stock = shoulder stock in first person,
 //       feel = spread growth per shot (bloom), its cap (maxBloom), recoil (kick) and extra spread while moving (move).
 //       start: true = every survivor begins with it (with startAmmo spare rounds).
+//       adsZoom = how far aiming down the sights zooms in (1.3 = 30% closer).
 // Melee: dmg, cool = seconds between swings, reach (m), arc = swing width (radians), targets = zombies hit per swing,
 //        cut = can take limbs off, knock = shove distance, cost, len = model length (m), col = head colour, desc = shop text.
 //        model: optional function (g, kit) that builds your own 3D model; see MODDING.md.
 Rebirth.content.guns = {
-    pistol: { name: 'Pistol', start: true, startAmmo: 24, an: 'Pistol rounds', dmg: 32, cool: 0.24, mag: 12, reload: 1.4, pellets: 1, spread: 0, pierce: 0, range: 45, cost: 0, box: 12, acost: 30, pickup: 8, model: [0.22, 0], feel: { bloom: 0.012, maxBloom: 0.05, kick: 0.012, move: 0.02 } },
-    smg: { name: 'SMG', an: 'SMG rounds', dmg: 20, cool: 0.09, mag: 30, reload: 1.8, pellets: 1, spread: 0.02, pierce: 0, range: 40, cost: 450, box: 30, acost: 40, pickup: 15, model: [0.36, 1], feel: { bloom: 0.006, maxBloom: 0.06, kick: 0.007, move: 0.025 } },
-    shotgun: { name: 'Shotgun', an: 'Shotgun shells', dmg: 36, cool: 0.75, mag: 6, reload: 2.2, pellets: 5, spread: 0.07, pierce: 0, range: 22, cost: 300, box: 8, acost: 40, pickup: 4, model: [0.62, 0], stock: true, feel: { bloom: 0.0, maxBloom: 0.02, kick: 0.045, move: 0.015 } },
-    rifle: { name: 'Rifle', an: 'Rifle rounds', dmg: 90, cool: 0.6, mag: 8, reload: 2.0, pellets: 1, spread: 0, pierce: 2, range: 60, cost: 600, box: 10, acost: 50, pickup: 4, model: [0.74, 1], stock: true, feel: { bloom: 0.03, maxBloom: 0.06, kick: 0.03, move: 0.04 } }
+    pistol: { name: 'Pistol', start: true, startAmmo: 24, an: 'Pistol rounds', dmg: 32, cool: 0.24, mag: 12, reload: 1.4, pellets: 1, spread: 0, pierce: 0, range: 45, cost: 0, box: 12, acost: 30, pickup: 8, model: [0.22, 0], adsZoom: 1.25, feel: { bloom: 0.012, maxBloom: 0.05, kick: 0.012, move: 0.02 } },
+    smg: { name: 'SMG', an: 'SMG rounds', dmg: 20, cool: 0.09, mag: 30, reload: 1.8, pellets: 1, spread: 0.02, pierce: 0, range: 40, cost: 450, box: 30, acost: 40, pickup: 15, model: [0.36, 1], adsZoom: 1.3, feel: { bloom: 0.006, maxBloom: 0.06, kick: 0.007, move: 0.025 } },
+    shotgun: { name: 'Shotgun', an: 'Shotgun shells', dmg: 36, cool: 0.75, mag: 6, reload: 2.2, pellets: 5, spread: 0.07, pierce: 0, range: 22, cost: 300, box: 8, acost: 40, pickup: 4, model: [0.62, 0], stock: true, adsZoom: 1.15, feel: { bloom: 0.0, maxBloom: 0.02, kick: 0.045, move: 0.015 } },
+    rifle: { name: 'Rifle', an: 'Rifle rounds', dmg: 90, cool: 0.6, mag: 8, reload: 2.0, pellets: 1, spread: 0, pierce: 2, range: 60, cost: 600, box: 10, acost: 50, pickup: 4, model: [0.74, 1], stock: true, adsZoom: 1.8, feel: { bloom: 0.03, maxBloom: 0.06, kick: 0.03, move: 0.04 } }
   };
 
 Rebirth.content.melee = {
