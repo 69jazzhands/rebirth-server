@@ -1,0 +1,30 @@
+# Nakama settings for Rebirth. Change every value marked CHANGE before going live.
+name: rebirth
+logger:
+  level: "INFO"
+socket:
+  # The game is built with this key. It is not secret (players' copies contain it);
+  # it only stops random tools from talking to the server.
+  server_key: "rebirth-client-key"
+  # player updates carry zombie positions for the whole area, so allow bigger messages
+  max_message_size_bytes: 65536
+  max_request_size_bytes: 262144
+session:
+  token_expiry_sec: 604800            # a week, then the game quietly refreshes it
+  refresh_token_expiry_sec: 5184000   # 60 days
+  encryption_key: "CHANGE-ME-long-random-1"
+  refresh_encryption_key: "CHANGE-ME-long-random-2"
+runtime:
+  js_entrypoint: "index.js"
+  http_key: "CHANGE-ME-long-random-3"
+  env:
+    # Epic Games: from the Epic Developer Portal (Product Settings > Clients / Deployments)
+    - "EPIC_CLIENT_ID="
+    - "EPIC_CLIENT_SECRET="
+    - "EPIC_DEPLOYMENT_ID="
+    # Steam: from Steamworks (Users & Permissions > Manage Groups > Web API publisher key) and your App ID
+    - "STEAM_PUBLISHER_KEY="
+    - "STEAM_APP_ID="
+console:
+  username: "admin"
+  password: "CHANGE-ME-admin-password"
