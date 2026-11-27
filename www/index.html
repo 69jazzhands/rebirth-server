@@ -35,6 +35,7 @@
   #infTag { display: none; margin-top: 5px; font-weight: 700; color: #b8f06a; font-size: 11px; }
   /* phones: the menu buttons fold into a wheel, and one INTERACT button replaces drive / trade / forge */
   #wheelBtn, #useBtn, #wheel { display: none; }
+  body:not(.kbm):not(.pad) #hud .hx { display: none; }
   body:not(.kbm):not(.pad) .tbtn, body:not(.kbm):not(.pad) #drive, body:not(.kbm):not(.pad) #trade, body:not(.kbm):not(.pad) #forge { display: none !important; }
   body:not(.kbm):not(.pad).playing #wheelBtn { display: flex; }
   body:not(.kbm):not(.pad).playing #useBtn.show { display: flex; }
@@ -3927,15 +3928,15 @@ Rebirth.start(function () {
     hud.innerHTML = '<span>' + (NET.on ? (NET.conn === false ? 'Reconnecting' : NET.n > 1 ? 'Online <b>' + NET.n + '</b>' + (NET.host ? ' (host)' : '') : 'Online, alone') : '<b style="color:#a9a596">Offline</b>') + '</span>' + (overloaded() ? '<span><b style="color:#e0584c">' + (loadMul() <= 0 ? 'TOO HEAVY TO MOVE' : 'OVERLOADED -' + Math.round((1 - loadMul()) * 100) + '%') + '</b></span>' : '') + '<span>Bag <b>' + slotsUsed() + '/' + packSlots() + '</b></span>' +
       (drive ? '<span>Car <b>' + Math.ceil(drive.hp) + '%</b></span><span>Fuel <b>' + Math.ceil(drive.fuel) + '%</b></span><span><b>' + Math.round(Math.abs(drive.v) * 3.6) + '</b> km/h</span>' : (W().melee ? '<span>' + W().name + ' <b>melee</b></span>' : '<span>' + W().name + ' <b>' + (P.reload > 0 ? 'reloading' : P.inv.mags[P.weapon] + '</b> loaded, <b>' + P.inv.ammo[P.weapon] + '</b> spare') + '</b></span>')) +
       '<span><b>' + money(P.inv.silver) + '</b></span>' +
-      '<span>Scrap <b>' + P.inv.scrap + '</b> Gems <b>' + P.inv.gem + '</b> Teeth <b>' + P.inv.tooth + '</b></span>' +
-      '<span>Medkits <b>' + P.inv.meds + '</b></span>' +
-      '<span>Parts <b>' + P.inv.vparts + '</b> Fuel cans <b>' + P.inv.cans + '</b>' + (isCls('mechanic') ? ' Gas <b>' + P.inv.gas + '</b>' : '') + '</span>' +
+      '<span class="hx">Scrap <b>' + P.inv.scrap + '</b> Gems <b>' + P.inv.gem + '</b> Teeth <b>' + P.inv.tooth + '</b></span>' +
+      '<span class="hx">Medkits <b>' + P.inv.meds + '</b></span>' +
+      '<span class="hx">Parts <b>' + P.inv.vparts + '</b> Fuel cans <b>' + P.inv.cans + '</b>' + (isCls('mechanic') ? ' Gas <b>' + P.inv.gas + '</b>' : '') + '</span>' +
       (inSafe ? '<span><b style="color:#7fd89a">SAFE</b></span>' : '') +
-      (SK.cls ? '<span>' + klass(SK.cls).name + '</span>' : '') + '<span>Level <b>' + level() + '</b></span>' +
-      '<span>Kills <b>' + kills + '</b></span>' +
-      '<span>Survivors <b>' + crew.length + '/' + cap() + '</b></span>' +
-      '<span>' + Math.round(time) + 's</span>' +
-      '<span>' + Math.round(fpsS) + ' fps</span>';
+      (SK.cls ? '<span class="hx">' + klass(SK.cls).name + '</span>' : '') + '<span class="hx">Level <b>' + level() + '</b></span>' +
+      '<span class="hx">Kills <b>' + kills + '</b></span>' +
+      '<span class="hx">Survivors <b>' + crew.length + '/' + cap() + '</b></span>' +
+      '<span class="hx">' + Math.round(time) + 's</span>' +
+      '<span class="hx">' + Math.round(fpsS) + ' fps</span>';
   }
   var tradeBtn = document.getElementById('trade'), shopPanel = document.getElementById('shopPanel');
   function sellPrice(k) {
