@@ -23,6 +23,7 @@
   #fire.on { background: #7a2b22; }
   #aimBtn { right: 206px; bottom: 40px; width: 60px; height: 60px; font-size: 12px; border-color: #8fd3e8; color: #8fd3e8; }
   #aimBtn.on { background: #1f4a58; }
+  #relBtn { right: 206px; bottom: 110px; width: 60px; height: 60px; font-size: 9px; border-color: #b8c2a0; color: #d0d8b8; }
   body.ads #cross, body.ads #ret { opacity: 0; }
   body.ads.tp #cross, body.ads.tp #ret { opacity: 1; }
   #drive { right: 34px; bottom: 140px; width: 76px; height: 76px; font-size: 13px; border-color: #5fb0c9; color: #8fd3e8; display: none; }
@@ -105,10 +106,10 @@
   details p { margin: 0 0 12px; }
   button.padfocus, summary.padfocus, input.padfocus { outline: 3px solid #8fd3e8; outline-offset: 2px; }
   #prompt { position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); background: #000b; border: 1px solid #55655a; border-radius: 10px; padding: 8px 14px; font-size: 14px; font-weight: 600; color: #e8e4d8; display: none; z-index: 3; pointer-events: none; white-space: nowrap; }
-  body.pad #stick, body.pad #aimBtn, body.pad #fire, body.pad #wpn, body.pad #med, body.pad #gas, body.pad #brake, body.pad #drive, body.pad #trade, body.pad #forge, body.pad #hint { display: none !important; }
+  body.pad #stick, body.pad #aimBtn, body.pad #relBtn, body.pad #fire, body.pad #wpn, body.pad #med, body.pad #gas, body.pad #brake, body.pad #drive, body.pad #trade, body.pad #forge, body.pad #hint { display: none !important; }
   body.pad #prompt { display: block; }
   /* PC with keyboard and mouse: no on-screen joystick or touch buttons, keys shown on the top buttons */
-  body.kbm #stick, body.kbm #aimBtn, body.kbm #fire, body.kbm #wpn, body.kbm #med, body.kbm #gas, body.kbm #brake, body.kbm #drive, body.kbm #trade, body.kbm #forge, body.kbm #hint { display: none !important; }
+  body.kbm #stick, body.kbm #aimBtn, body.kbm #relBtn, body.kbm #fire, body.kbm #wpn, body.kbm #med, body.kbm #gas, body.kbm #brake, body.kbm #drive, body.kbm #trade, body.kbm #forge, body.kbm #hint { display: none !important; }
   body.kbm #prompt { display: block; }
   body.kbm .tbtn[data-key]::after { content: ' ' attr(data-key); opacity: .6; font-size: .85em; }
   body.pad .tbtn[data-pad]::after { content: ' ' attr(data-pad); opacity: .7; font-size: .85em; }
@@ -152,6 +153,7 @@
 <div class="btn" id="brake">BRAKE</div>
 <div class="btn" id="fire">FIRE</div>
 <div class="btn" id="aimBtn">AIM</div>
+<div class="btn" id="relBtn">RELOAD</div>
 <div id="prompt"></div>
 <div class="btn" id="drive">DRIVE</div>
 <div class="btn" id="trade">TRADE</div>
@@ -181,9 +183,9 @@
   <button class="main" id="start">Start</button>
   <p>Night has fallen on Denver. Fight the dead, loot, rescue survivors, and build a settlement. Tap a heading below to read how it works.</p>
   <details><summary>Art credits</summary><p>Full graphics use free CC0 (public-domain) scans found through BlenderKit: Asphalt and Junked Tire by PBRPX; Concrete Pavement, Red Bricks 02, Concrete Wall 009, Dirty Tiles, Rusty Metal 05, Cobblestone Street Night, Barrel 02, Trashbag and Metal Trash Can by Poly Haven; Nostalgic Damaged Wall Paint by Dmitriy Makarov; Lowpoly concrete barriers by SPLEEN.VISION Adam; EUR-Pallet by LensError Error. Characters and zombies: built with MakeHuman / MPFB and its CC0 asset packs (skins, clothes, hair), turned into zombies for Rebirth. Engine: three.js (MIT); texture compression: Basis Universal (Apache 2.0).</p></details>
-  <details id="helpTouch"><summary>Touch controls (phone and tablet)</summary><p>Move with the joystick in the bottom-left corner. Drag anywhere else to look. FIRE shoots exactly where the dot points; headshots do double damage. To aim down the sights, double-tap the right half of the screen or tap AIM: the view zooms in, shots are tighter and you move slower. Do it again to stop aiming. With a melee weapon in hand, FIRE swings it at whatever is in front of you. The buttons next to FIRE switch guns and use a medkit. The top-right buttons switch the camera view and the flashlight and open SKILLS, BASE and INVENTORY. Your health bar floats above you in third person and sits under the map in first person. The city wraps around: walk or drive off one edge and you come back in on the other side. While any menu is open (inventory, trunk, trader, forge, skills, base or the game menu) a green bubble protects you: zombies already within 14 m disappear and come back 36 to 52 m away, nothing can hurt you, and any that come close are pushed out, until 1.5 seconds after you close it.</p></details>
-  <details id="helpPad"><summary id="helpPadT">Controller</summary><p id="helpPadP">Xbox, PlayStation and most Bluetooth or USB controllers work. Left stick: move, or steer in a car. Right stick: look. Right trigger: fire, or gas in a car. Left trigger: aim down the sights (hold), or brake and reverse in a car. A / Cross: drive, exit, repair or trade. B / Circle: medkit. X / Square: switch gun. Y / Triangle: camera view. LB: turret. RB: trap. D-pad up: flashlight. D-pad down: wall. D-pad left: base. View/Share: inventory. Start/Options: menu. D-pad right or Menu/Options: skills. In menus, the D-pad or left stick moves between buttons, A presses, B closes, and the right stick scrolls.</p></details>
-  <details id="helpKey"><summary>Keyboard and mouse (PC)</summary><p>Click the game to capture the mouse (Esc lets it go). Mouse: look. Left click or Space: fire. Right click (hold): aim down the sights, which zooms in, tightens your shots and slows you down. Z toggles aiming instead of holding. Mouse wheel or Q: switch weapon (guns and melee). WASD or the arrow keys: move; in a car W is gas and S brakes and reverses. E: drive, get out, repair, trade or forge. H: medkit. V: camera view. F: flashlight. T: turret. G: trap. X: wall. B: base. K: skills. I or Tab: inventory. M or Esc: menu.</p></details>
+  <details id="helpTouch"><summary>Touch controls (phone and tablet)</summary><p>Move with the joystick in the bottom-left corner. Drag anywhere else to look. FIRE shoots exactly where the dot points; headshots do double damage. To aim down the sights, double-tap the right half of the screen or tap AIM: the view zooms in, shots are tighter and you move slower. Do it again to stop aiming. RELOAD reloads before the magazine runs dry. With a melee weapon in hand, FIRE swings it at whatever is in front of you. The buttons next to FIRE switch guns and use a medkit. The top-right buttons switch the camera view and the flashlight and open SKILLS, BASE and INVENTORY. Your health bar floats above you in third person and sits under the map in first person. The city wraps around: walk or drive off one edge and you come back in on the other side. While any menu is open (inventory, trunk, trader, forge, skills, base or the game menu) a green bubble protects you: zombies already within 14 m disappear and come back 36 to 52 m away, nothing can hurt you, and any that come close are pushed out, until 1.5 seconds after you close it.</p></details>
+  <details id="helpPad"><summary id="helpPadT">Controller</summary><p id="helpPadP">Xbox, PlayStation and most Bluetooth or USB controllers work. Left stick: move, or steer in a car. Right stick: look. Right trigger: fire, or gas in a car. Left trigger: aim down the sights (hold), or brake and reverse in a car. Right stick click: reload. A / Cross: drive, exit, repair or trade. B / Circle: medkit. X / Square: switch gun. Y / Triangle: camera view. LB: turret. RB: trap. D-pad up: flashlight. D-pad down: wall. D-pad left: base. View/Share: inventory. Start/Options: menu. D-pad right or Menu/Options: skills. In menus, the D-pad or left stick moves between buttons, A presses, B closes, and the right stick scrolls.</p></details>
+  <details id="helpKey"><summary>Keyboard and mouse (PC)</summary><p>Click the game to capture the mouse (Esc lets it go). Mouse: look. Left click or Space: fire. R: reload. Right click (hold): aim down the sights, which zooms in, tightens your shots and slows you down. Z toggles aiming instead of holding. Mouse wheel or Q: switch weapon (guns and melee). WASD or the arrow keys: move; in a car W is gas and S brakes and reverses. E: drive, get out, repair, trade or forge. H: medkit. V: camera view. F: flashlight. T: turret. G: trap. X: wall. B: base. K: skills. I or Tab: inventory. M or Esc: menu.</p></details>
   <details><summary>Loot, money and the shop</summary><p>Every zombie drops a few items, rarer ones less often: common scrap and ammo, uncommon (green ring) medkits, vehicle parts and fuel, rare (blue ring) gems, and epic (purple ring) teeth and special zombie parts. In multiplayer every kill drops the same loot for every player, so everyone gets their own copy, and buildings hold the same items for everyone. Anything within 5 metres of you is picked up automatically. Each backpack slot holds one stack (100 scrap, 50 gems or teeth, 25 medkits, 25 vehicle parts, 15 fuel cans, 5 of a zombie part); money and ammo take no space. Every stack over your slot limit slows you 20%, and five over pins you in place until you drop something from the INVENTORY. Upgrade the backpack at the shop for more slots. Every car also has its own trunk (sedan 125 slots, pickup 175, van 250): stand next to one or sit in it and open INVENTORY to store or take loot. Some abandoned cars still have things in the trunk. Sell it at the shop: 1000 silver = 1 gold, 1000 gold = 1 diamond. The shop is a safe zone the dead cannot enter, and you heal while you are there. It sells guns (SMG, shotgun, rifle), ammo for each, medkits, fuel, parts and upgrades.</p></details>
   <details><summary>Cars</summary><p>Walk up to a car and press DRIVE. GAS and BRAKE drive it, and the joystick steers. Hold BRAKE when stopped to reverse. You can run zombies down, but it damages the car. Cars with a flat tyre or wreck damage can be repaired with three vehicle parts. Flipped cars stay wrecked.</p></details>
   <details><summary>Mods</summary><p>Rebirth can be modded. Everything in the world lives in sorted content files: weapons, shop goods and loot in content/items, zombie types in content/zombies, people in content/characters, and streets, props, furniture, building types and landmark buildings in content/world. Mods go in the mods folder and can add new weapons, zombies, shop items, characters, props, furniture and buildings. Turn mods on or off under Settings. The full guide is MODDING.md in the game files.</p></details>
@@ -544,16 +546,21 @@ Rebirth.start(function () {
   var lineM = new T.MeshBasicMaterial({ color: 0xb8962e, fog: true });
   var dash = canvasTex(64, 16, function (g, w, h) { g.clearRect(0, 0, w, h); g.fillStyle = '#b8962e'; g.fillRect(4, 5, 34, 6); });
   var LINES = []; for (var li = -WH; li < WH; li += 24) LINES.push(li); // the road at -120 is also the road at +120
+  // centre lines: one stretch per block, stopping short of every intersection (roads are 7 m wide)
+  var dblM = new T.MeshBasicMaterial({ color: 0xc9a032, fog: true }), SEG = 24 - 9;
+  var dashT = dash.clone(); dashT.needsUpdate = true; dashT.repeat.set(SEG / 4, 1); dashT.wrapS = T.RepeatWrapping;
+  var dashM = new T.MeshLambertMaterial({ map: dashT, transparent: true, opacity: 0.8 }), dashG = new T.PlaneGeometry(SEG, 0.3), dblG = new T.PlaneGeometry(SEG, 0.1);
   LINES.forEach(function (c) {
     [0, 1].forEach(function (rot) {
-      if ((rot && c === 0) || (!rot && c === -24)) { // Broadway and Colfax: double yellow lines
-        [-0.14, 0.14].forEach(function (o) { var m2 = new T.Mesh(new T.PlaneGeometry(WS, 0.1), new T.MeshBasicMaterial({ color: 0xc9a032, fog: true })); m2.rotation.x = -Math.PI / 2; if (rot) m2.rotation.z = Math.PI / 2; m2.position.set(rot ? c + o : 0, 0.021, rot ? 0 : c + o); scene.add(m2); });
-        return;
-      }
-      var t = dash.clone(); t.needsUpdate = true; t.repeat.set(WS / 4, 1);
-      var m = new T.Mesh(new T.PlaneGeometry(WS, 0.3), new T.MeshLambertMaterial({ map: t, transparent: true, opacity: 0.8 }));
-      m.rotation.x = -Math.PI / 2; if (rot) m.rotation.z = Math.PI / 2;
-      m.position.set(rot ? c : 0, 0.02, rot ? 0 : c); m.receiveShadow = true; scene.add(m);
+      var dbl = (rot && c === 0) || (!rot && c === -24);   // Broadway and Colfax: double yellow lines
+      LINES.forEach(function (c2) {
+        var mid = c2 + 12;
+        (dbl ? [-0.14, 0.14] : [0]).forEach(function (o) {
+          var m = new T.Mesh(dbl ? dblG : dashG, dbl ? dblM : dashM);
+          m.rotation.x = -Math.PI / 2; if (rot) m.rotation.z = Math.PI / 2;
+          m.position.set(rot ? c + o : mid, dbl ? 0.021 : 0.02, rot ? mid : c + o); m.receiveShadow = !dbl; scene.add(m);
+        });
+      });
     });
   });
 
@@ -1039,8 +1046,8 @@ Rebirth.start(function () {
       (HQ ? ['color', 'normal', 'rough'] : ['color']).forEach(function (kind) {
         if (kind === 'color' && FACADE_SRC[name]) load('assets/textures/' + name + '_color.jpg', function (t) { t.image.__k = name === 'brick' ? 2 : 1.45; FACADE_SRC[name].forEach(function (fi) { facades[fi].userData.repaint(t.image); }); t.dispose(); });
         loadKTX(name + '_' + kind + (kind === 'color' && !HQ ? '_lite' : '_full'), function (t) {
-          list.forEach(function (q) {
-            var m = q[0], base = m.userData.baseRep || (m.userData.baseRep = m.map ? m.map.repeat.clone() : new T.Vector2(1, 1)), tt = list.length > 1 ? t.clone() : t; tt.needsUpdate = true;
+          (typeof list === 'function' ? list() : list).forEach(function (q) {
+            var m = q[0], base = m.userData.baseRep || (m.userData.baseRep = m.map ? m.map.repeat.clone() : new T.Vector2(1, 1)), tt = t.clone(); tt.needsUpdate = true;
             tt.repeat.copy(base).multiplyScalar(q[2] || 1);
             if (kind === 'color') { m.map = tt; m.color.setHex(q[1]); }
             else if (kind === 'normal') { m.normalMap = tt; m.normalScale.set(q[3] || 1, q[3] || 1); }
@@ -1052,7 +1059,8 @@ Rebirth.start(function () {
     }
     var FACADE_SRC = { concrete: [0, 2], brick: [1, 4], plaster: [3] };
     // [material, tint, extra tiling, normal strength]
-    surface('asphalt', [[ground.material, 0x5c5e62, 1.6, 1]]);
+    // the diagonal avenues share the street asphalt (their materials exist once the city is built)
+    surface('asphalt', function () { return [[ground.material, 0x5c5e62, 1.6, 1]].concat(Object.keys(diagAsph || {}).map(function (k) { return [diagAsph[k], 0x5c5e62, 1.6, 1]; })); });
     surface('sidewalk', [[curbMat, 0x6a6a6a, 1, 1]]);
     surface('concrete', [[concreteM, 0x727070, 1, 1]]);
     surface('brick', [[brickM, 0x8a7a74, 1, 1.2]]);
@@ -1317,21 +1325,30 @@ Rebirth.start(function () {
     return false;
   }
   function flat(m, x, z, y, len, wid, ang) { stat(planeGeo, m, x, y, z, -Math.PI / 2, ang || 0, 0, len, wid, 1); }
+  var diagAsph = {};
+  function asphaltFor(len, wid) {   // the street asphalt, tiled at the same scale as the ground (3.75 m)
+    var key = len.toFixed(2) + 'x' + wid; if (diagAsph[key]) return diagAsph[key];
+    var t = asphalt.clone(); t.needsUpdate = true; t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(len / 3.75, wid / 3.75);
+    var m = new T.MeshLambertMaterial({ map: t });
+    if (HQ) { m.roughness = 0.9; m.normalMap = ground.material.normalMap; m.normalScale.set(0.32, 0.32); m.envMapIntensity = 0.7; }
+    return (diagAsph[key] = m);
+  }
   function diagCorridors() {
     DIAGS.forEach(function (D) {
       var th = D.k === 1 ? -Math.PI / 4 : Math.PI / 4, px = D.k === 1 ? 0.7071 : 0.7071, pz = D.k === 1 ? -0.7071 : 0.7071; // across-the-corridor direction
       alongDiag(D, 3, function (x, z) {
         var cx = x + 1.5, cz = D.k === 1 ? z + 1.5 : z - 1.5, L = 3 * Math.SQRT2 + 0.6;
         function at(s) { return [cx + px * s, cz + pz * s]; }
+        function inMap(q) { return Math.abs(q[0]) <= WH && Math.abs(q[1]) <= WH; }
         if (D.mall) { var q = at(0); flat(paverM, q[0], q[1], 0.03, L, D.road, th); if (((x + 120) / 3) % 3 === 0) { var pq = at(D.road / 2 - 0.6); stat(boxGeo(1, 0.6, 1), mat(0x4a3a2c), pq[0], 0.3, pq[1], 0, th, 0); colliders.push({ x0: pq[0] - 0.5, x1: pq[0] + 0.5, z0: pq[1] - 0.5, z1: pq[1] + 0.5, h: 0.6 }); } return; }
-        var r = at(D.creek ? -5.5 : 0); flat(speerM, r[0], r[1], 0.03, L, D.road, th);
+        var r = at(D.creek ? -5.5 : 0); if (inMap(r)) flat(asphaltFor(L, D.road), r[0], r[1], 0.03, L, D.road, th);
         if (((x + 120) / 3) % 4 === 0) { var dsh = at(D.creek ? -5.5 : 0); flat(lineM, dsh[0], dsh[1], 0.04, 1.6, 0.16, th); }
         if (!D.creek) return;
-        var w = at(4.75); flat(waterM, w[0], w[1], 0.02, L, 4.6, th);
-        var bank = at(1.2); flat(lawnM, bank[0], bank[1], 0.035, L, 2.2, th); var bank2 = at(8.6); flat(lawnM, bank2[0], bank2[1], 0.035, L, 2.4, th);
+        var w = at(4.75); if (inMap(w)) flat(waterM, w[0], w[1], 0.02, L, 4.6, th);
+        var bank = at(1.2); if (inMap(bank)) flat(lawnM, bank[0], bank[1], 0.035, L, 2.2, th); var bank2 = at(8.6); if (inMap(bank2)) flat(lawnM, bank2[0], bank2[1], 0.035, L, 2.4, th);
         var bridge = nearLine(cx, 5) || nearLine(cz, 5);
-        if (bridge) { var bq = at(4.75); flat(speerM, bq[0], bq[1], 0.04, L, 5.4, th); return; }
-        [2.25, 7.25].forEach(function (s) { var p = at(s); stat(boxGeo(L, 0.7, 0.3), stoneM, p[0], 0.35, p[1], 0, th, 0); colliders.push({ x: p[0], z: p[1], ang: th, hw: L / 2, hd: 0.2, br: L / 2 + 0.2, h: 0.75, thin: 1 }); });
+        if (bridge) { var bq = at(4.75); if (inMap(bq)) flat(asphaltFor(L, 5.4), bq[0], bq[1], 0.04, L, 5.4, th); return; }
+        [2.25, 7.25].forEach(function (s) { var p = at(s); if (!inMap(p)) return; stat(boxGeo(L, 0.7, 0.3), stoneM, p[0], 0.35, p[1], 0, th, 0); colliders.push({ x: p[0], z: p[1], ang: th, hw: L / 2, hd: 0.2, br: L / 2 + 0.2, h: 0.75, thin: 1 }); });
       });
     });
   }
@@ -2470,7 +2487,7 @@ Rebirth.start(function () {
   var joy = { id: null, sx: 0, sy: 0, dx: 0, dy: 0 }, look = { id: null, lx: 0, ly: 0 }, keys = {}, firing = false;
   // aim down the sights: held (right mouse, left trigger) or toggled (Z, the AIM button, a double-tap on the right half of the screen)
   var ads = { hold: false, toggle: false, k: 0, on: false, tap: null };
-  function adsWanted() { return (ads.hold || ads.toggle || pad.lt > 0.35) && running && !paused && !drive && !openPanel() && !W().melee && P.hp > 0; }
+  function adsWanted() { return (ads.hold || ads.toggle || pad.lt > 0.35) && running && !paused && !drive && !openPanel() && !W().melee && P.hp > 0 && !(P.reload > 0); }
   function setAdsToggle(v) { ads.toggle = v; aimBtnEl.className = 'btn' + (v ? ' on' : ''); }
   function lookSens() { return camera.fov / BASE_FOV; }   // slower look while zoomed in
   var viewEl = document.getElementById('view');
@@ -2511,7 +2528,8 @@ Rebirth.start(function () {
   });
   function endPtr(e) { if (e.pointerId === joy.id) { joy.id = null; joy.dx = joy.dy = 0; } if (e.pointerId === look.id) look.id = null; }
   viewEl.addEventListener('pointerup', endPtr); viewEl.addEventListener('pointercancel', endPtr);
-  var aimBtnEl = document.getElementById('aimBtn');
+  var aimBtnEl = document.getElementById('aimBtn'), relBtnEl = document.getElementById('relBtn');
+  relBtnEl.addEventListener('pointerdown', function (e) { e.preventDefault(); e.stopPropagation(); manualReload(); });
   aimBtnEl.addEventListener('pointerdown', function (e) { e.preventDefault(); e.stopPropagation(); setAdsToggle(!ads.toggle && !W().melee); });
   var fireBtn = document.getElementById('fire');
   fireBtn.addEventListener('pointerdown', function (e) { e.preventDefault(); firing = true; fireBtn.className = 'btn on'; });
@@ -2524,7 +2542,7 @@ Rebirth.start(function () {
     var k = e.key.toLowerCase(); keys[k] = true; if (k === ' ') e.preventDefault();
     if (k === 'e' && !e.repeat && !paused) { if (!drive && !nearCar && tradeBtn.style.display === 'none' && forgeBtn.style.display !== 'none') forgeBtn.click(); else useCarBtn(); }
     if (k === 't' && !e.repeat) deployTurret();
-    if (k === 'q' && !e.repeat && !paused) switchWeapon(); if (k === 'h' && !e.repeat) useMed();
+    if (k === 'q' && !e.repeat && !paused) switchWeapon(); if (k === 'r' && !e.repeat && !paused && running) manualReload(); if (k === 'h' && !e.repeat) useMed();
     if (k === 'v' && !e.repeat) toggleView(); if (k === 'f' && !e.repeat) toggleLight(); if (k === 'z' && !e.repeat) setAdsToggle(!ads.toggle);
     if (!e.repeat && !openPanel() && running) {
       if (k === 'g') placeTrap();
@@ -2773,7 +2791,7 @@ Rebirth.start(function () {
     var w = W(), I = P.inv;
     if (w.melee) { swing(w); return; }
     if (I.mags[P.weapon] <= 0) {
-      if (I.ammo[P.weapon] > 0) { P.reload = w.reload * P.reloadMul / (1 + pm('o0')); say('Reloading...'); }
+      if (I.ammo[P.weapon] > 0) startReload();
       else { P.cool = 0.4; if (msgT <= 0) say('Out of ' + w.an.toLowerCase() + '. Switch guns or buy more at the shop.'); }
       return;
     }
@@ -2805,7 +2823,7 @@ Rebirth.start(function () {
     tracerGeo.setFromPoints([tmpA, tmpB]); tracer.material.opacity = 0.85; netShot(tmpA, tmpB);
     muzzle.position.copy(tmpA); muzzle.intensity = w.pellets > 1 ? 4.5 : 3.2;
     I.mags[P.weapon]--; P.cool = w.cool / (1 + pm('o0') * 0.5) / (I.gear.runner ? 1 + 0.4 * (1 + pm('k2')) : 1); P.aimT = 1.2; recoil = w.pellets > 1 || P.weapon === 'rifle' ? 1.6 : 1;
-    if (I.mags[P.weapon] <= 0 && I.ammo[P.weapon] > 0) { P.reload = w.reload * P.reloadMul / (1 + pm('o0')); say('Reloading...'); }
+    if (I.mags[P.weapon] <= 0 && I.ammo[P.weapon] > 0) startReload();
   }
   /* ---------- melee ---------- */
   var swingS = { t: 0, dur: 0, hitAt: 0, done: true, w: null };
@@ -2850,6 +2868,13 @@ Rebirth.start(function () {
     var room = magSize(id) - I.mags[id], take = Math.min(room, I.ammo[id]);
     if (take > 0) { I.mags[id] += take; I.ammo[id] -= take; }
   }
+  function startReload() {
+    var w = W(); if (w.melee || P.reload > 0 || P.inv.ammo[P.weapon] <= 0 || P.inv.mags[P.weapon] >= magSize(P.weapon)) return false;
+    P.reload = P.reloadDur = w.reload * P.reloadMul / (1 + pm('o0')); P.reloadId = P.weapon; P.magDropped = false; say('Reloading...'); return true;
+  }
+  function manualReload() { if (!drive && !startReload() && !W().melee && P.inv.ammo[P.weapon] <= 0 && P.inv.mags[P.weapon] < magSize(P.weapon)) say('No spare ' + W().an.toLowerCase() + '.'); }
+  // 0 .. 1 through the current reload, or -1
+  function reloadPhase() { return P.reload > 0 && P.reloadDur && P.reloadId === P.weapon && !W().melee ? Math.min(1, 1 - P.reload / P.reloadDur) : -1; }
   function finishReload() {
     var I = P.inv, id = P.weapon, need = magSize(id) - I.mags[id], take = Math.min(need, I.ammo[id]);
     I.mags[id] += take; I.ammo[id] -= take;
@@ -2874,7 +2899,12 @@ Rebirth.start(function () {
   // with a realistic body the gun follows the model's right hand (the game's own arm is only a stand-in)
   var tpHold = new T.Group(); scene.add(tpHold);
   var _hp = new T.Vector3(), _hd = new T.Vector3(), _hz = new T.Vector3(), _hx = new T.Vector3(), _hm = new T.Matrix4(), _hq = new T.Quaternion(), _hs = new T.Vector3();
+  function tpMagVisible() {
+    var tg = handGun.userData.gun, m = tg && tg.userData.mag, u = reloadPhase(); if (!m) return;
+    m.visible = !(u >= 0.3 && u < 0.6);
+  }
   function placeHandGun() {
+    tpMagVisible();
     var hand = player.model && (player.model.bones.FistL || player.model.bones.LowerArmL), tg = handGun.userData.gun;
     if (!hand) {   // no realistic body: hang the gun off the game's own forearm
       if (handGun.parent !== player.RA.el) player.RA.el.add(handGun);
@@ -2962,20 +2992,20 @@ Rebirth.start(function () {
     var M = FPM, kind = id; g.userData.stocks = [];
     function stk(o) { g.userData.stocks.push(o); return o; }
     if (id === 'pistol') {
-      fpBox(g, 0.028, 0.03, 0.19, M.metal2, 0, -0.02, -0.085); fpBox(g, 0.026, 0.022, 0.15, M.metal, 0, -0.045, -0.07);
+      g.userData.slide = fpBox(g, 0.028, 0.03, 0.19, M.metal2, 0, -0.02, -0.085); g.userData.mag = fpBox(g, 0.02, 0.085, 0.034, M.metal2, 0, -0.1, 0.012, 0.25); fpBox(g, 0.026, 0.022, 0.15, M.metal, 0, -0.045, -0.07);
       fpBox(g, 0.028, 0.1, 0.045, M.metal, 0, -0.095, 0.01, 0.25); fpBox(g, 0.006, 0.02, 0.04, M.metal, 0, -0.065, -0.04);
       fpCyl(g, 0.006, 0.01, M.metal, 0, -0.022, -0.183); fpSights(g, -0.17);
     } else if (id === 'smg') {
       fpBox(g, 0.04, 0.05, 0.3, M.metal, 0, -0.03, -0.1); fpCyl(g, 0.011, 0.12, M.metal2, 0, -0.025, -0.31);
-      fpBox(g, 0.026, 0.15, 0.042, M.metal2, 0, -0.12, -0.12, -0.12); fpBox(g, 0.03, 0.09, 0.042, M.metal, 0, -0.095, 0.03, 0.25);
+      g.userData.mag = fpBox(g, 0.026, 0.15, 0.042, M.metal2, 0, -0.12, -0.12, -0.12); fpBox(g, 0.03, 0.09, 0.042, M.metal, 0, -0.095, 0.03, 0.25);
       stk(fpBox(g, 0.02, 0.03, 0.2, M.metal2, 0, -0.04, 0.14)); fpBox(g, 0.012, 0.008, 0.26, M.metal2, 0, -0.006, -0.1); fpSights(g, -0.23);
     } else if (id === 'shotgun') {
       fpBox(g, 0.045, 0.06, 0.22, M.metal, 0, -0.04, -0.02); fpCyl(g, 0.012, 0.52, M.metal2, 0, -0.02, -0.38); fpCyl(g, 0.01, 0.46, M.metal, 0, -0.045, -0.35);
-      fpCyl(g, 0.02, 0.2, M.wood, 0, -0.048, -0.29); stk(fpBox(g, 0.04, 0.075, 0.26, M.wood, 0, -0.07, 0.2, -0.12)); fpBox(g, 0.03, 0.08, 0.04, M.wood, 0, -0.1, 0.07, 0.3);
+      g.userData.pump = fpCyl(g, 0.02, 0.2, M.wood, 0, -0.048, -0.29); stk(fpBox(g, 0.04, 0.075, 0.26, M.wood, 0, -0.07, 0.2, -0.12)); fpBox(g, 0.03, 0.08, 0.04, M.wood, 0, -0.1, 0.07, 0.3);
       fpBox(g, 0.006, 0.006, 0.006, M.sight, 0, -0.005, -0.63); fpBox(g, 0.02, 0.004, 0.02, M.metal, 0, -0.008, -0.02);
     } else if (id === 'rifle') {
       fpBox(g, 0.04, 0.055, 0.3, M.metal, 0, -0.035, -0.05); fpBox(g, 0.05, 0.05, 0.26, M.wood, 0, -0.04, -0.33); fpCyl(g, 0.009, 0.22, M.metal2, 0, -0.03, -0.56);
-      fpBox(g, 0.024, 0.13, 0.05, M.metal2, 0, -0.11, -0.1, -0.25); fpBox(g, 0.03, 0.09, 0.04, M.metal, 0, -0.1, 0.06, 0.25);
+      g.userData.mag = fpBox(g, 0.024, 0.13, 0.05, M.metal2, 0, -0.11, -0.1, -0.25); fpBox(g, 0.03, 0.09, 0.04, M.metal, 0, -0.1, 0.06, 0.25);
       stk(fpBox(g, 0.04, 0.08, 0.26, M.wood, 0, -0.06, 0.22, -0.08)); fpBox(g, 0.012, 0.008, 0.3, M.metal2, 0, -0.006, -0.12);
       fpCyl(g, 0.009, 0.01, M.metal, 0, 0.0, 0.0); fpSights(g, -0.44);
     } else {   // a modded gun: a plain body sized from its "model" length
@@ -2984,7 +3014,57 @@ Rebirth.start(function () {
       fpBox(g, 0.04, 0.05, L, M.metal, 0, -0.03, -L / 2 + 0.03); fpBox(g, 0.03, 0.09, 0.042, M.metal, 0, -0.095, 0.03, 0.25); fpSights(g, -L + 0.05);
     }
     if (!noHands) fpHands(g, kind === 'smg' ? 'rifle' : kind);
+    // remember where the moving parts rest, for the reload animation
+    ['mag', 'slide', 'pump'].forEach(function (k) { var o = g.userData[k]; if (o) o.userData.home = o.position.clone(); });
+    if (!noHands) { g.userData.left = g.children[g.children.length - 1]; g.userData.left.userData.home = g.userData.left.position.clone(); }
+    if (id === 'shotgun') { var sh = new T.Mesh(new T.CylinderGeometry(0.009, 0.009, 0.06, 8), mat(0xa02a22)); sh.rotation.x = Math.PI / 2; sh.visible = false; g.add(sh); g.userData.shell = sh; }
     g.userData.grip = GRIP[id] || [0, -0.095, 0.03];
+  }
+  // reload animation. Magazine guns: tilt, drop the old magazine, fetch a new one, seat it, rack. Shotgun: shells one by one, then pump.
+  function bump(u, a, b) { return u <= a || u >= b ? 0 : Math.sin((u - a) / (b - a) * Math.PI); }
+  function ramp(u, a, b) { return u <= a ? 0 : u >= b ? 1 : (u - a) / (b - a); }
+  function reloadEnv(u) { return u < 0 ? 0 : Math.min(1, u / 0.14, (1 - u) / 0.12); }
+  var dropMags = [];
+  function dropMag(from) {   // the empty magazine falls to the ground and stays a few seconds
+    var m = new T.Mesh(boxGeo(0.025, 0.12, 0.045), FPM.metal2); m.position.copy(from); m.rotation.set(rnd(-0.4, 0.4), rnd(0, 6), rnd(-0.4, 0.4)); m.castShadow = true;
+    m.userData.v = new T.Vector3(rnd(-0.4, 0.4), -0.5, rnd(-0.4, 0.4)); m.userData.t = 0; scene.add(m); dropMags.push(m);
+    if (dropMags.length > 8) scene.remove(dropMags.shift());
+  }
+  function updateDropMags(dt) {
+    for (var i = dropMags.length - 1; i >= 0; i--) {
+      var m = dropMags[i], v = m.userData.v; m.userData.t += dt;
+      if (m.position.y > groundY(m.position.x, m.position.z) + 0.02) { v.y -= 9.8 * dt; m.position.addScaledVector(v, dt); m.rotation.x += dt * 6; }
+      else { m.position.y = groundY(m.position.x, m.position.z) + 0.02; m.rotation.x = Math.PI / 2; }
+      if (m.userData.t > 9) { scene.remove(m); dropMags.splice(i, 1); }
+    }
+  }
+  function animateFpReload(u) {
+    var g = fpGun.userData, e = reloadEnv(u), mag = g.mag, left = g.left, sg = P.weapon === 'shotgun' || W().pellets > 1;
+    viewGun.rotation.z += (sg ? 0.6 : 0.5) * e; viewGun.rotation.x += 0.22 * e; viewGun.rotation.y += (sg ? 0.25 : 0.45) * e;   // cant it and turn the magazine well toward you
+    viewGun.position.y += 0.03 * e * viewGun.scale.x; viewGun.position.x -= 0.075 * e * viewGun.scale.x; viewGun.position.z += 0.04 * e * viewGun.scale.x;
+    if (mag && mag.userData.home) {
+      var out = ramp(u, 0.15, 0.32), back = ramp(u, 0.48, 0.7), off = out * (1 - back);
+      mag.position.copy(mag.userData.home); mag.position.y -= 0.3 * off; mag.visible = !(out >= 1 && back <= 0);
+      if (left && left.userData.home) { left.position.copy(left.userData.home); left.position.y -= 0.3 * bump(u, 0.22, 0.7); left.position.z += 0.05 * bump(u, 0.22, 0.7); }
+      if (g.slide && g.slide.userData.home) { g.slide.position.copy(g.slide.userData.home); g.slide.position.z += 0.035 * bump(u, 0.76, 0.9); }
+      else if (left) left.position.z += 0.12 * bump(u, 0.74, 0.9);   // charging handle
+    } else if (g.shell) {
+      var n = 4, c = ramp(u, 0.12, 0.72) * n, cyc = c % 1, inLoop = u > 0.12 && u < 0.72;
+      g.shell.visible = inLoop && cyc < 0.8;
+      g.shell.position.set(0, -0.06 - 0.12 * Math.max(0, 1 - cyc / 0.6), -0.04 - 0.02 * Math.min(1, cyc / 0.6));
+      if (left && left.userData.home) {
+        left.position.copy(left.userData.home);
+        if (inLoop) { left.position.z += 0.24 - 0.02 * Math.min(1, cyc / 0.6); left.position.y -= 0.1 * Math.max(0, 1 - cyc / 0.6) + 0.015; }
+        else left.position.z += 0.24 * ramp(u, 0.04, 0.12) * (1 - ramp(u, 0.72, 0.78));
+        var pump = bump(u, 0.8, 0.95); left.position.z += 0.07 * pump;
+        if (g.pump && g.pump.userData.home) { g.pump.position.copy(g.pump.userData.home); g.pump.position.z += 0.07 * pump; }
+      }
+    }
+  }
+  function resetFpReload() {
+    var g = fpGun.userData;
+    ['mag', 'slide', 'pump', 'left'].forEach(function (k) { var o = g[k]; if (o && o.userData.home) { o.position.copy(o.userData.home); o.visible = true; } });
+    if (g.shell) g.shell.visible = false;
   }
   function setGunModel() {
     [handGun, fpGun].forEach(function (g) { while (g.children.length) g.remove(g.children[0]); }); handGun.userData.gun = null;
@@ -3024,7 +3104,7 @@ Rebirth.start(function () {
     // shooting
     P.cool -= dt; P.aimT -= dt;
     if (P.reload > 0) { P.reload -= dt; if (P.reload <= 0) finishReload(); }
-    else if (!drive && P.inv.mags[P.weapon] <= 0 && P.inv.ammo[P.weapon] > 0) { P.reload = W().reload * P.reloadMul / (1 + pm('o0')); say('Reloading...'); }
+    else if (!drive && P.inv.mags[P.weapon] <= 0 && P.inv.ammo[P.weapon] > 0) startReload();
     else if ((firing || keys[' '] || pad.fire) && P.cool <= 0 && !drive) shoot();
     nearCar = drive ? null : findNearCar();
     driveBtn.style.display = drive || nearCar ? 'flex' : 'none';
@@ -3115,7 +3195,7 @@ Rebirth.start(function () {
     ads.on = adsWanted(); if (ads.on) P.aimT = Math.max(P.aimT, 0.3);
     ads.k += ((ads.on ? 1 : 0) - ads.k) * Math.min(1, dt * 12); if (ads.k < 0.002) ads.k = 0;
     document.body.classList.toggle('ads', ads.k > 0.5); document.body.classList.toggle('tp', !firstPerson);
-    P.aimK = (P.aimK || 0) + (((P.aimT > 0 && !W().melee) ? 1 : 0) - (P.aimK || 0)) * Math.min(1, dt * 14);
+    P.aimK = (P.aimK || 0) + (((P.aimT > 0 && !W().melee && !(P.reload > 0)) ? 1 : 0) - (P.aimK || 0)) * Math.min(1, dt * 14);
     var ak = P.aimK, two = W().pellets > 1 || W().stock || (W().model && W().model[1]) || W().mag > 15;
     function mix(a, b) { return a + (b - a) * ak; }
     player.RA.sh.rotation.x = mix(s * 0.5 * ml, -Math.PI / 2 - pitch * 0.95 + recoil * 0.2); player.RA.el.rotation.x = mix(-0.45, -0.12);
@@ -3123,6 +3203,24 @@ Rebirth.start(function () {
     player.LA.sh.rotation.x = mix(-s * 0.5 * ml, (two ? -1.42 : -1.3) - pitch * 0.95 + recoil * 0.15); player.LA.sh.rotation.z = mix(0, two ? 0.5 : 0.62);
     player.LA.sh.rotation.y = mix(0, -0.2); player.LA.el.rotation.x = mix(-0.35, two ? -0.25 : -0.55);
     player.torso.rotation.x = mix(ml * 0.08, 0.02);
+    var ru3 = reloadPhase();
+    if (ru3 >= 0) {   // gun up in front of the chest, the other hand swaps the magazine (or feeds shells, then pumps)
+      var re = reloadEnv(ru3), shot = W().pellets > 1, away;
+      if (shot) { var cy = ramp(ru3, 0.12, 0.72) * 4 % 1; away = ru3 > 0.12 && ru3 < 0.72 ? Math.sin(cy * Math.PI) * 0.6 : 0; }
+      else away = bump(ru3, 0.22, 0.7);
+      var rmix = function (cur, v) { return cur + (v - cur) * re; };
+      player.RA.sh.rotation.x = rmix(player.RA.sh.rotation.x, -0.75); player.RA.el.rotation.x = rmix(player.RA.el.rotation.x, -1.05);
+      player.RA.sh.rotation.z = rmix(player.RA.sh.rotation.z, -0.3); player.RA.sh.rotation.y = rmix(player.RA.sh.rotation.y, 0.2);
+      player.LA.sh.rotation.x = rmix(player.LA.sh.rotation.x, -0.85 + 0.75 * away); player.LA.sh.rotation.z = rmix(player.LA.sh.rotation.z, 0.6 - 0.45 * away);
+      player.LA.el.rotation.x = rmix(player.LA.el.rotation.x, -1.0 + 0.5 * away); player.LA.sh.rotation.y = rmix(player.LA.sh.rotation.y, -0.2);
+      player.torso.rotation.x = rmix(player.torso.rotation.x, 0.08);
+      // the old magazine drops out of the gun
+      if (!shot && !P.magDropped && ru3 > 0.28) {
+        P.magDropped = true; var at = new T.Vector3();
+        if (firstPerson) { at.set(0.1, -0.35, -0.3).applyMatrix4(camera.matrixWorld); } else if (handGun.userData.gun) handGun.userData.gun.getWorldPosition(at); else at.set(P.x, P.y + 1.1, P.z);
+        dropMag(at);
+      }
+    }
     var sp = swingPhase();
     if (sp >= 0) { player.RA.sh.rotation.y = 0; player.LA.sh.rotation.y = 0;   // overhead-to-low diagonal swing
       var e = sp < 0.4 ? sp / 0.4 : 1 - (sp - 0.4) / 0.6 * 0.2, wind = sp < 0.4 ? -2.6 + 0.4 * (sp / 0.4) : -2.2 + 2.4 * Math.min(1, (sp - 0.4) / 0.35);
@@ -3130,7 +3228,7 @@ Rebirth.start(function () {
     } else player.torso.rotation.y = 0;
     fpGun.rotation.x = sp >= 0 ? (sp < 0.4 ? 0.7 * sp / 0.4 : 0.7 - 2.2 * Math.min(1, (sp - 0.4) / 0.35)) : 0;
     fpGun.rotation.z = sp >= 0 ? -0.5 * Math.sin(sp * Math.PI) : 0;
-    updateSwing(dt);
+    updateSwing(dt); updateDropMags(dt);
     player.root.position.set(P.x, P.y, P.z); player.root.rotation.y = P.face;
     recoil = Math.max(0, recoil - dt * 8);
     updateGunFeel(dt, Math.hypot(P.x - (P.lfx || P.x), P.z - (P.lfz || P.z)) > dt * 1.5); P.lfx = P.x; P.lfz = P.z; updateFx(dt);
@@ -3284,6 +3382,7 @@ Rebirth.start(function () {
       _vgp.x += Math.sin(P.phase) * 0.006 * bob; _vgp.y += Math.abs(Math.sin(P.phase)) * 0.008 * bob; _vgp.z += recoil * (0.03 - 0.015 * ak2);
       viewGun.position.copy(_vgp).multiplyScalar(zf); viewGun.scale.setScalar(zf);
       (fpGun.userData.stocks || []).forEach(function (o) { o.visible = ak2 < 0.5; });
+      var ru = reloadPhase(); if (ru >= 0) animateFpReload(ru); else if (fpGun.userData.animated !== false) resetFpReload(); fpGun.userData.animated = ru >= 0;
       viewGun.rotation.set(recoil * (0.22 - 0.14 * ak2), 0.06 * (1 - ak2), 0);
     } else {
       player.root.visible = true; viewGun.visible = false;
@@ -4557,7 +4656,7 @@ Rebirth.start(function () {
     for (var id in tag) { var el = document.getElementById(id); if (el) el.setAttribute('data-pad', tag[id]); }
     document.getElementById('helpPadT').textContent = FAMNAME[f];
     document.getElementById('helpPadP').textContent = 'Left stick: move, or steer in a car. Right stick: look. ' + GL(7) + ': fire, or gas in a car. ' + GL(6) + ': aim down the sights (hold), or brake and reverse in a car. ' +
-      GL(0) + ': drive, get out, repair, trade or forge. ' + GL(1) + ': medkit. ' + GL(2) + ': switch gun. ' + GL(3) + ': camera view. ' + GL(4) + ': turret. ' + GL(5) + ': trap. ' +
+      GL(0) + ': drive, get out, repair, trade or forge. ' + GL(1) + ': medkit. ' + GL(2) + ': switch gun. ' + GL(11) + ': reload. ' + GL(3) + ': camera view. ' + GL(4) + ': turret. ' + GL(5) + ': trap. ' +
       'D-pad up: flashlight. D-pad down: wall. D-pad left: base. D-pad right: skills. ' + GL(8) + (f === 'ps' ? ' or touchpad click' : '') + ': inventory. ' + GL(9) + ': menu. ' +
       'In menus the D-pad or left stick moves between buttons (left and right change sliders), ' + GL(0) + ' selects, ' + GL(1) + ' goes back, and the right stick scrolls. ' +
       'Xbox, PlayStation and Nintendo controllers each show their own button names; others use the Xbox layout.';
@@ -4639,6 +4738,7 @@ Rebirth.start(function () {
     if (e[0]) { if (drive || nearCar) useCarBtn(); else if (tradeBtn.style.display !== 'none') tradeBtn.click(); else if (forgeBtn.style.display !== 'none') forgeBtn.click(); }
     if (e[1]) useMed();
     if (e[2]) switchWeapon();
+    if (e[11]) manualReload();
     if (e[3]) toggleView();
     if (e[4]) deployTurret();
     if (e[5]) placeTrap();

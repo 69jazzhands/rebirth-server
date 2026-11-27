@@ -1,6 +1,6 @@
 {
-"version": "0.8.1",
-"build": 202611271139,
+"version": "0.8.2",
+"build": 202611271200,
 "files": {
 "MODDING.md": [
 9109,
@@ -348,15 +348,15 @@
 ],
 "content/world/streets.js": [
 1232,
-"6e7891692e7ae3359d6e483b4ecd18b18466236220a9190e602eebbae4b74510"
+"60096cd0b5d268ed5995ca07f54c085357c40f0bd35b89b4822fffbdacf55916"
 ],
 "content/zombies/types.js": [
 2738,
 "ea9a0035c58b65fbb51dd5224b9dda848ccfec5f6b41b24949d34e03aeef94de"
 ],
 "index.html": [
-391433,
-"cefc2b4e42ca34c86ffd10efef75350020f1e4fbd57185a8fcfd70ea356c5b0c"
+399837,
+"a3a915364759c021ba8a7617fbe996c2d99b522a2271c54b4b0bba0a33f68bce"
 ],
 "lib/basis/basis_transcoder.js": [
 57529,

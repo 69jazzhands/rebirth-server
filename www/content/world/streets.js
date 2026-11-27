@@ -6,7 +6,7 @@ Rebirth.content.streets.ns = { '-120': 'Osage St', '-96': 'Mariposa St', '-72': 
 Rebirth.content.streets.ew = { '-120': 'Bayaud Ave', '-96': '18th Ave', '-72': '17th Ave', '-48': '16th Ave', '-24': 'E Colfax Ave', '0': '14th Ave', '24': '11th Ave', '48': '8th Ave', '72': '6th Ave', '96': '3rd Ave' };
 Rebirth.content.streets.diagonals = [
     { name: 'Speer Blvd', k: 1, c: -84, road: 7, band: 10, creek: true },
-    { name: '16th St Mall', k: 1, c: 24, road: 5, band: 3.6, mall: true, z0: -96, z1: -30 },   // Union Station down to Broadway and Colfax
-    { name: 'California St', k: -1, c: -132, road: 6, band: 4, z0: -120, z1: -30 },
-    { name: 'Champa St', k: -1, c: -36, road: 6, band: 4, z0: -120, z1: -30 }
+    { name: '16th St Mall', k: 1, c: 24, road: 5, band: 3.6, mall: true, z0: -96, z1: -24 },   // Union Station down to Broadway and Colfax
+    { name: 'California St', k: -1, c: -132, road: 6, band: 4, z0: -120, z1: -24 },
+    { name: 'Champa St', k: -1, c: -36, road: 6, band: 4, z0: -120, z1: -24 }
   ];
