@@ -4764,6 +4764,16 @@ Rebirth.start(function () {
 
   (function () {
     var box = document.getElementById('modList'), list = Rebirth.modList || [];
+    if (window.RebirthAndroid) {   // Android app: mods can live in a folder on the phone
+      var fr = document.createElement('div'); fr.style.cssText = 'display:flex;align-items:center;gap:8px;justify-content:space-between';
+      var ft = document.createElement('small'); ft.style.cssText = 'opacity:.85;line-height:1.3';
+      var fname = ''; try { fname = window.RebirthAndroid.modsFolder(); } catch (e) {}
+      ft.textContent = fname ? 'Mods folder: ' + fname + '. Copy mod folders into it.' : 'No mods folder yet. Choose one to load mods from your phone.';
+      var fb = document.createElement('button'); fb.className = 'act'; fb.textContent = fname ? 'Change folder' : 'Choose folder';
+      fb.addEventListener('click', function () { try { window.RebirthAndroid.pickModsFolder(); } catch (e) {} });
+      fr.appendChild(ft); fr.appendChild(fb); box.appendChild(fr);
+      window.rebirthModsFolder = function (n) { ft.textContent = 'Mods folder: ' + n + '. Restart the game to load the mods in it.'; fb.textContent = 'Change folder'; };
+    }
     if (!list.length) { box.innerHTML = '<small style="opacity:.7">No mods installed.</small>'; return; }
     list.forEach(function (e) {
       var m = Rebirth.mods.filter(function (x) { return x.id === e.id; })[0], on = Rebirth.isEnabled(e), bad = Rebirth.failed.filter(function (x) { return x.id === e.id; })[0];
