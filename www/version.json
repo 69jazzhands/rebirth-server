@@ -1,6 +1,6 @@
 {
-"version": "0.8.2",
-"build": 202611271200,
+"version": "0.9.0",
+"build": 202611271218,
 "files": {
 "MODDING.md": [
 9109,
@@ -311,8 +311,8 @@
 "8496dd7fcf3d0a36093df02e29f97e44df9dc834a4981267dd46d0ba074bd5ba"
 ],
 "content/items/weapons.js": [
-3590,
-"a1b5e670d76884aeea8758498cab54eef5b518691daa8ceefab875c8fd78e73c"
+3719,
+"c1deb62bf0ad39e33588cb9858ed4705bf352eaba712bc3bfa89378a290ab17d"
 ],
 "content/world/building-themes.js": [
 1260,
@@ -355,8 +355,8 @@
 "ea9a0035c58b65fbb51dd5224b9dda848ccfec5f6b41b24949d34e03aeef94de"
 ],
 "index.html": [
-399837,
-"a3a915364759c021ba8a7617fbe996c2d99b522a2271c54b4b0bba0a33f68bce"
+433817,
+"eec992069747ae9fd4ab48bc20b14829dcddfc1d7ccf50b60f62d74cd3c23457"
 ],
 "lib/basis/basis_transcoder.js": [
 57529,
