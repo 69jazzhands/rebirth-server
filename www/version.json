@@ -1,0 +1,390 @@
+{
+"version": "0.8.0",
+"build": 202611270604,
+"files": {
+"MODDING.md": [
+9109,
+"e8f0a42528c1f79b5df61cbcb01d8457232db1e31f46cf392445d30526440d2e"
+],
+"assets/chars/Casual2_Female.json": [
+199678,
+"72d800c6fe771b6beb2012df4c28c3d74bf5635665b9757433f4142e65362cb7"
+],
+"assets/chars/Casual2_Male.json": [
+175796,
+"2ff0051871294a331e0177a6983f53e18c4fbea9f9dbbb49f8e4a574cad862e1"
+],
+"assets/chars/Casual3_Female.json": [
+154227,
+"b68b94f4596cf43c8fecf817bf781b530ee758bed239cf803efca172367b85ab"
+],
+"assets/chars/Casual3_Male.json": [
+145127,
+"c08160ae3a1c3b99d0c88ef43d6f955f7db74be617093f329e01c686e0295f05"
+],
+"assets/chars/Casual_Female.json": [
+187013,
+"52db80f60f3304a679b278c8c439b4aefa6ce40a9f44a5a46b2bbc2e89deeda9"
+],
+"assets/chars/Casual_Male.json": [
+181059,
+"de4f0471db49f6f6b48bd0967a630222a31364ade42fa604f1274531a2ebe174"
+],
+"assets/chars/OldClassy_Male.json": [
+228912,
+"2138e471436370a02335ed9e81579ecaaa9f1fbe0bb0772378951860e897d028"
+],
+"assets/chars/Suit_Male.json": [
+180799,
+"277b02bcd4d9b4ceb01f12466c227c1972e11dbbeff8594b4d0ce86da4f2fd5a"
+],
+"assets/chars/Worker_Female.json": [
+164114,
+"fae0eda062d1294ed6209b44597caa52036ad2de29927d434e7241465c37572a"
+],
+"assets/chars/Worker_Male.json": [
+154856,
+"aae1f7d085459a9e97ec37bbb5674d38ac57c325978752f074709cbdf84cb4eb"
+],
+"assets/chars/Zombie_Female.json": [
+160634,
+"6432f9efd936b9c4065f288ce03e3d71ce421a3e7b78a61ce02917d4891bdfae"
+],
+"assets/chars/Zombie_Female2.json": [
+159768,
+"23c00bc80f4106a56f1bb5ca2a41bb53ee248ccd0a57ca5ccab83fb5fa027c81"
+],
+"assets/chars/Zombie_Male.json": [
+138535,
+"b80a2a4737e0d9e9ada4a73affaa533c4a30865ef67b36727c5097a6dfef93a8"
+],
+"assets/chars/Zombie_Male2.json": [
+178594,
+"92d6ab0b71321fc22c7960708db59ab9cfd8b8548a8ebee3f668d5c979bf62db"
+],
+"assets/chars/Zombie_Male3.json": [
+150192,
+"8bb3779f5544f3e7338b46bdb08bf50f5393e17c5833724f813ca355bdc2bca3"
+],
+"assets/chars/Zombie_Male4.json": [
+148874,
+"9e54296b2e77216ce2618e5ecfd7e10cf5b3c314d964977c336aff9653f2c711"
+],
+"assets/props/barrel.json": [
+121175,
+"d81e5168f721ae32b6af632e803cf28fe6437f9fecb23340cc725d0a5bae33ad"
+],
+"assets/props/barrier.json": [
+58142,
+"207f34542e928bb2c9256b2b5415525182c2f2f14a03af756393d29076391a20"
+],
+"assets/props/pallet.json": [
+80167,
+"7a8986ef47a64a70d315b19d51b3af2406829087664c8cb65c1f49b9a7cbb8f0"
+],
+"assets/props/tire.json": [
+132916,
+"d9b6e9f730273064aaf883bf06611915b4b785691132591f4596e37aec7768e9"
+],
+"assets/props/trashbag.json": [
+171985,
+"4e6751566de50b21639013984fdd988515c534ebf8ab6efc70c61709545ccd9c"
+],
+"assets/props/trashcan.json": [
+521570,
+"c62f553d2ae2fd5a766a61c0f7d23342f5ae2f44513075c33fcdd23391e143a0"
+],
+"assets/textures/asphalt_color.jpg": [
+189468,
+"03baf4ecda6001ed8cb76d7e37f221b5b32369140bf7c36255e90c6c112c2861"
+],
+"assets/textures/asphalt_normal.jpg": [
+54800,
+"5140f73ba1ca2427045184c1f99a107f6ecc69e89db1f56d8445754d689e13c2"
+],
+"assets/textures/asphalt_rough.jpg": [
+2323,
+"d3ec32c68ec6b4c408dc6d238d1802748bdb1d8f8ded1b3144350e6dfbf47d75"
+],
+"assets/textures/brick_color.jpg": [
+342606,
+"1b30c8adde1561c90e715a15441c4d5579280a7406750e09dd3a53c424231131"
+],
+"assets/textures/brick_normal.jpg": [
+73135,
+"80b895cdb579effdea9ab5bc74f5e3aa70778f2099b3bc2e8e7244e57d58bec7"
+],
+"assets/textures/brick_rough.jpg": [
+18017,
+"8bdce53627e40de964ab722b4f2cc3a5cabcddc1b3035e4a83a497d7f5584525"
+],
+"assets/textures/concrete_color.jpg": [
+126305,
+"1c23c738675468f14ac6c5ce17aaae0650b35b564239076303cbd81419a4e9cd"
+],
+"assets/textures/concrete_normal.jpg": [
+51192,
+"f96f95e87949d2d7a8f59a2180a28388617039eadc39b59fced126ade2280a0d"
+],
+"assets/textures/concrete_rough.jpg": [
+59464,
+"9e351a6ea6a6299a9bc7c14bf894f0a085473cacded6cd7be3af34e308ca4dec"
+],
+"assets/textures/ktx/asphalt_color_full.json": [
+248084,
+"10fbdd31f68b1aa9098d85878773b70c4a4e2f74720d2534d43c17a6086b9625"
+],
+"assets/textures/ktx/asphalt_color_lite.json": [
+18060,
+"c4734b5fa25e670367cd12685e7e255ec3d2d8e4e7bdb850d8a953beb50163cd"
+],
+"assets/textures/ktx/asphalt_normal_full.json": [
+95592,
+"ecf87b4949be6b677b09a489ec50310978542bd097699ab9f5a23b112c12e011"
+],
+"assets/textures/ktx/asphalt_rough_full.json": [
+8556,
+"87655762ba9f52b575238009a835bd588116199472176d83a019e4e28b169fd7"
+],
+"assets/textures/ktx/brick_color_full.json": [
+310968,
+"4893942076e70880d76017741961239162f6225fe029c0351bcfb935c0a64669"
+],
+"assets/textures/ktx/brick_color_lite.json": [
+25272,
+"5a29b53d57af4413767f98f0fdde4c8e8644caa78e2c5ff01b83936c7e67caab"
+],
+"assets/textures/ktx/brick_normal_full.json": [
+115296,
+"cb989118b7b68cfdf1a4b9c1a6654138d32599996a0624df2be41ce94c23a3be"
+],
+"assets/textures/ktx/brick_rough_full.json": [
+59572,
+"f2fd3b8227c100b11a8b0c1a620dc9dffea0a14c6a7e304fddb108287a53feaa"
+],
+"assets/textures/ktx/concrete_color_full.json": [
+225300,
+"b3474146f0a6497f3cd8cffbf7125efcc27901516be5854e2593ccc098687892"
+],
+"assets/textures/ktx/concrete_color_lite.json": [
+18260,
+"7c74031d619f0294ffe8e1fdd3d035f63ad0ec1d5e148d8cf631bfdae921982b"
+],
+"assets/textures/ktx/concrete_normal_full.json": [
+89068,
+"0cc3a46f62fcba26c51f7f90e9e5ad9075eecdda9213cd2c895a2ff8e68c22f9"
+],
+"assets/textures/ktx/concrete_rough_full.json": [
+93176,
+"a4c88a2b0829f47888ccdbf190dcf7045497aaf8f20c1321aa9075ab3d521097"
+],
+"assets/textures/ktx/plaster_color_full.json": [
+24624,
+"4c7fdc73a965c349738ca7f7980eed36afdcd2f73df86c8703fefec8a4eb12d7"
+],
+"assets/textures/ktx/plaster_color_lite.json": [
+8564,
+"46decc8346be13829fc996ca369bbeab6b410fc7c7dda7d5a8fa593efd4fdef6"
+],
+"assets/textures/ktx/plaster_normal_full.json": [
+15380,
+"2950170e947bbe74eab1a7896b5fadaabcdbf63a4c916fdd4634a2b1fa8b757b"
+],
+"assets/textures/ktx/plaster_rough_full.json": [
+18676,
+"59f512c323a1703b6be29ba14f3db516bdead7ada4a2ab6c32d9231e8ce91fc9"
+],
+"assets/textures/ktx/rust_color_full.json": [
+89096,
+"8437429fefcd8f3ffa24e16da67ed14953a61902d918ce75a43ca829a10637de"
+],
+"assets/textures/ktx/rust_color_lite.json": [
+24076,
+"7b7852ba61615d783273cf32c207610a8feeda01378a5eb5b6f3e7b3978be10c"
+],
+"assets/textures/ktx/rust_normal_full.json": [
+22656,
+"10d1af195c44289f3ec31e2b913fa50c8fcab01c00a30f8532ae4e1e9e668c10"
+],
+"assets/textures/ktx/rust_rough_full.json": [
+23312,
+"b80806f0c7ed28337fbe1f4d99c446a69cadf675e6e6921babd4ec09b6d23858"
+],
+"assets/textures/ktx/sidewalk_color_full.json": [
+265376,
+"f6573f3c72882791d92b086a7a5c5583c2fcc015c5092dce499b9dd9b06ce909"
+],
+"assets/textures/ktx/sidewalk_color_lite.json": [
+19416,
+"35dcc38c35860bd09f0fc7ea89b8e2d3f8fc3a302cdcce7c3d1b0c274bf922c8"
+],
+"assets/textures/ktx/sidewalk_normal_full.json": [
+79848,
+"319f77dec78a82070fbed66347ee38efff4654abcb25fe53b7c96e454030dad1"
+],
+"assets/textures/ktx/sidewalk_rough_full.json": [
+27328,
+"083dd234d3abaf9fb4ce2fde98ec49364cf2b426a7de30a422558748cfe90f2f"
+],
+"assets/textures/ktx/tiles_color_full.json": [
+60120,
+"37d3a8217f7270824e75ad7b19f7ff1107fcdf5b3b854a4dc030b19439842b8e"
+],
+"assets/textures/ktx/tiles_color_lite.json": [
+17448,
+"946dad8714c6aacbb670c6b2b59be46e8be5eeb72b0d0a2e4a93747fe2610d4f"
+],
+"assets/textures/ktx/tiles_normal_full.json": [
+28312,
+"f599edcf077468bd84722f633145e814e6cbccf82335dd4b131708cc7555dfd9"
+],
+"assets/textures/ktx/tiles_rough_full.json": [
+23152,
+"1551457e4d9a052858589d44056d10e2c1b87df43a382e8669829c2d970140aa"
+],
+"assets/textures/night_env.jpg": [
+26157,
+"baf4f93fd46afaa80bbae14e2fbfa884c43b204a3ff7dfc21d907c2f87488c4b"
+],
+"assets/textures/plaster_color.jpg": [
+10684,
+"61b38b4e5403fae43e8a24fafb1d81c03922754a96ff1e1e7159fd5b5a250aed"
+],
+"assets/textures/plaster_normal.jpg": [
+9292,
+"579bc10880ab5239a34e6eaa12dabe496631947fd22f9ad216087dcfcc791380"
+],
+"assets/textures/plaster_rough.jpg": [
+6656,
+"659a12386a9f09d69e0dbc859e5021dc28112bf408c37778b8873d8bdd87801f"
+],
+"assets/textures/rust_color.jpg": [
+55431,
+"a38b2d640e2637c830394e563b7b2d9249c3be2751d262514ffcd96016d33f22"
+],
+"assets/textures/rust_normal.jpg": [
+9319,
+"18c38b2398d242a60df73b089613fd3a2a46cd194180120a1aa72eec7361d679"
+],
+"assets/textures/rust_rough.jpg": [
+8658,
+"e6643855b8fc9cb117018b5a6024036ea214dffde7ac53d7c713ccb9f34cdc69"
+],
+"assets/textures/sidewalk_color.jpg": [
+288215,
+"973946906b639424460da2f1158bf02f6a3f935d3973f6f6386c568d23502014"
+],
+"assets/textures/sidewalk_normal.jpg": [
+36676,
+"f296dbe037bc9be1d6f54fecd9320f5761a8eaf22fbd2a9b492b0cd313350d27"
+],
+"assets/textures/sidewalk_rough.jpg": [
+11333,
+"e327a0054f74179dc6b15e3b2f0a4c71ddffd34c73a626c544749110d82c1335"
+],
+"assets/textures/tiles_color.jpg": [
+22534,
+"152b74c7133df092738d85c3ab294a99cb4ba6a2aa861bb8c48d8e8fca6194b4"
+],
+"assets/textures/tiles_normal.jpg": [
+12772,
+"fe1c431404999af09ad8f19684315d767f9d18c933539bc5a850e8794e25ae92"
+],
+"assets/textures/tiles_rough.jpg": [
+8250,
+"7ede050f36ae83f2993aa0770d9b9b351b8d5ac3f25502570c1f3dff285cb8e5"
+],
+"content/README.md": [
+689,
+"ab15fc19a3d6d6c125d8b2c6aadfa14e608c77f1c82d2a8f1cfb36470f0eee80"
+],
+"content/characters/characters.js": [
+839,
+"4da2e6f94742f7da9eb453e8d8e095538ca6afcc8665080344f3842a5c897487"
+],
+"content/items/loot.js": [
+894,
+"daf78051382f381467ac879e83c4fe65786d6a34af538a87dfb0aa6c68a81e49"
+],
+"content/items/shop.js": [
+524,
+"8496dd7fcf3d0a36093df02e29f97e44df9dc834a4981267dd46d0ba074bd5ba"
+],
+"content/items/weapons.js": [
+3453,
+"84ea7ffca2fcd881e973e4c4eef8e31dbbcb72e9835cdfee0fc327860dec3681"
+],
+"content/world/building-themes.js": [
+1260,
+"bbf5ecbbeac6f055af38dcb8af26e5e68f6dadfff54511ddf7476b5ee75096f1"
+],
+"content/world/buildings/civicPark.js": [
+1664,
+"6748a1942ab7cad79373b7c62371667827bb06bcc8a6772ca085554a9639a7ea"
+],
+"content/world/buildings/railYard.js": [
+1218,
+"21bc4730348aa343a9a0cb93193a4cd2db17a2f40fd234c9fa6306e76f456cc4"
+],
+"content/world/buildings/stateCapitol.js": [
+2282,
+"21f04e1142a3b7250e40d86bb08cb04607e99ba7e578e332cf25076d8e8f7bc9"
+],
+"content/world/buildings/unionStation.js": [
+1622,
+"ee34463dbdb71abcc8a4627cf890804c50ad9b8d48d453226eeed1e9dd5ac966"
+],
+"content/world/furniture.js": [
+4836,
+"815502136526bbad13990eaf154f9aefd3f152746280d4e19d5335d612588555"
+],
+"content/world/landmarks.js": [
+990,
+"2ce182e058456007a7101fcb6580010296f3a8f784b7fc2ddccbf80eccc0eea2"
+],
+"content/world/props.js": [
+985,
+"aec913514529a610f8d7926f25dbeb1426c124b6dfa63e2f4bd39d4e30c7b96f"
+],
+"content/world/streets.js": [
+1232,
+"6e7891692e7ae3359d6e483b4ecd18b18466236220a9190e602eebbae4b74510"
+],
+"content/zombies/types.js": [
+2738,
+"ea9a0035c58b65fbb51dd5224b9dda848ccfec5f6b41b24949d34e03aeef94de"
+],
+"index.html": [
+379429,
+"4ba60e1133a71df8245e0a0366217d483cab5395748c58ad4e2947d59ab904b4"
+],
+"lib/basis/basis_transcoder.js": [
+57529,
+"8478b5b6d6b74e7d3082b89f6417321d8d1dc0307f2b30d4484bb11b441696a1"
+],
+"lib/basis/basis_transcoder.wasm": [
+527333,
+"6cf17dc889352c42e9acf8897107978d127005fe3386c36a0e3845e27967630a"
+],
+"lib/nakama.js": [
+100718,
+"bb8783291326de92df41ad66a654ac83a0dff46c6edb483b56dc464ff9cda278"
+],
+"lib/rebirth-api.js": [
+4925,
+"b1ca7c1ead75a70b9097fdeae5e8bd25d234011871a323e1ccaf8138d88f7bb5"
+],
+"lib/three-r187.js": [
+1023045,
+"1b240e4f8e55e5555eda0b8e8bebfbf9eb1e7b2f47e535078af5067e34cea3ba"
+],
+"mods/example-pack/mod.js": [
+2641,
+"223067f0ecac1b63e353f981a945ee258acddb60f360ec271d13f1474b152040"
+],
+"mods/mods.js": [
+383,
+"5327c1c81605defadda628ecd447ab937c5d84866ae0e48877f7ddc6244fb520"
+]
+}
+}

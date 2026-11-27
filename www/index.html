@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>window.REBIRTH_SERVER = location.origin; window.REBIRTH_WEB_URL = location.origin;</script>
+<script id="rebirth-flags">window.REBIRTH_SERVER = location.origin; window.REBIRTH_WEB_URL = location.origin;</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Rebirth 3D Test</title>
@@ -302,6 +302,19 @@
     if (e.target && e.target.id === 'bootClose') document.getElementById('bootErr').style.display = 'none';
   });
 })();
+</script>
+<script>
+/* the phone and PC apps call this when they have downloaded a newer version of the game in the background */
+window.rebirthUpdateReady = function (version) {
+  if (document.getElementById('updReady')) return;
+  var d = document.createElement('div'); d.id = 'updReady';
+  d.style.cssText = 'position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 54px);transform:translateX(-50%);z-index:60;background:rgba(14,16,14,.92);border:1px solid #5fd07a;color:#dfe8d6;font:13px system-ui,sans-serif;padding:8px 12px;border-radius:8px;display:flex;gap:10px;align-items:center;max-width:92vw';
+  d.innerHTML = '<span></span><button style="background:#5fd07a;color:#0b0c0e;border:0;border-radius:6px;padding:5px 10px;font:600 12px system-ui">Restart</button><button style="background:none;border:0;color:#9aa;font:16px system-ui;padding:0 4px">&times;</button>';
+  d.children[0].textContent = 'Update ' + (version || '') + ' is ready.';
+  d.children[1].onclick = function () { if (window.rebirthRestart) window.rebirthRestart(); else location.reload(); };
+  d.children[2].onclick = function () { d.remove(); };
+  document.body.appendChild(d);
+};
 </script>
 <script src="lib/three-r187.js"></script>
 <!-- game content: every table the game reads, sorted by kind (see MODDING.md) -->
