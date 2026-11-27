@@ -33,6 +33,20 @@
   #stealth .nz i { width: 9px; background: #e8e4d822; border-radius: 2px; }
   #stealth .st { height: 3px; margin-top: 5px; background: #e8e4d822; border-radius: 2px; overflow: hidden; } #stealth .st i { display: block; height: 100%; background: #8fd3e8; }
   #infTag { display: none; margin-top: 5px; font-weight: 700; color: #b8f06a; font-size: 11px; }
+  /* phones: the menu buttons fold into a wheel, and one INTERACT button replaces drive / trade / forge */
+  #wheelBtn, #useBtn, #wheel { display: none; }
+  body:not(.kbm):not(.pad) .tbtn, body:not(.kbm):not(.pad) #drive, body:not(.kbm):not(.pad) #trade, body:not(.kbm):not(.pad) #forge { display: none !important; }
+  body:not(.kbm):not(.pad).playing #wheelBtn { display: flex; }
+  body:not(.kbm):not(.pad).playing #useBtn.show { display: flex; }
+  #wheelBtn { right: 12px; top: 54px; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; border-color: #e8e4d8aa; }
+  #wheelBtn i { display: block; width: 18px; height: 2px; background: #e8e4d8; box-shadow: 0 -6px 0 #e8e4d8, 0 6px 0 #e8e4d8; }
+  #useBtn { right: 30px; bottom: 140px; width: 76px; height: 76px; font-size: 12px; border-color: #8fd3e8; color: #bfeaf6; }
+  #wheel { position: fixed; inset: 0; z-index: 20; background: radial-gradient(circle at 50% 50%, #0b0d0cd0 0, #0b0d0c90 60%, #0b0d0c40 100%); touch-action: none; }
+  #wheel.open { display: block; }
+  #wheel .wi { position: absolute; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center;
+    background: #1c211ef0; border: 2px solid #e8e4d855; color: #e8e4d8; font-size: 11px; font-weight: 700; line-height: 1.15; padding: 6px; box-sizing: border-box; transition: transform .08s, background .08s; }
+  #wheel .wi.hot { background: #3a4a2a; border-color: #b8d88a; transform: scale(1.12); }
+  #wheel .wc { position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #e8e4d855; color: #e8e4d8aa; font-size: 22px; background: #0d100ecc; }
   #crouchBtn { left: 168px; bottom: 34px; width: 58px; height: 58px; font-size: 9px; border-color: #b8c2a0; color: #d0d8b8; }
   #crouchBtn.on { background: #3a4a2a; }
   #relBtn { right: 206px; bottom: 110px; width: 60px; height: 60px; font-size: 9px; border-color: #b8c2a0; color: #d0d8b8; }
@@ -167,6 +181,9 @@
 <div class="btn" id="aimBtn">AIM</div>
 <div class="btn" id="relBtn">RELOAD</div>
 <div class="btn" id="crouchBtn">CROUCH</div>
+<div class="btn" id="wheelBtn" aria-label="Menu wheel"><i></i></div>
+<div class="btn" id="useBtn">USE</div>
+<div id="wheel"></div>
 <div id="stealth"><div class="aw hidden"><svg viewBox="0 0 22 14"><path d="M1 7 Q11 -3 21 7 Q11 17 1 7 Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="11" cy="7" r="3" fill="currentColor"/></svg><span id="awTxt">Hidden</span></div><div class="nz"><small>Noise</small><i></i><i></i><i></i><i></i><i></i></div><div class="st"><i></i></div><div id="infTag"></div></div>
 <div id="prompt"></div>
 <div class="btn" id="drive">DRIVE</div>
@@ -197,7 +214,7 @@
   <button class="main" id="start">Start</button>
   <p>Night has fallen on Denver. Fight the dead, loot, rescue survivors, and build a settlement. Tap a heading below to read how it works.</p>
   <details><summary>Art credits</summary><p>Full graphics use free CC0 (public-domain) scans found through BlenderKit: Asphalt and Junked Tire by PBRPX; Concrete Pavement, Red Bricks 02, Concrete Wall 009, Dirty Tiles, Rusty Metal 05, Cobblestone Street Night, Barrel 02, Trashbag and Metal Trash Can by Poly Haven; Nostalgic Damaged Wall Paint by Dmitriy Makarov; Lowpoly concrete barriers by SPLEEN.VISION Adam; EUR-Pallet by LensError Error. Characters and zombies: built with MakeHuman / MPFB and its CC0 asset packs (skins, clothes, hair), turned into zombies for Rebirth. Engine: three.js (MIT); texture compression: Basis Universal (Apache 2.0).</p></details>
-  <details id="helpTouch"><summary>Touch controls (phone and tablet)</summary><p>Move with the joystick in the bottom-left corner; push it all the way out to sprint. CROUCH, next to the joystick, keeps you quiet and low. Drag anywhere else to look. FIRE shoots exactly where the dot points; headshots do double damage. To aim down the sights, double-tap the right half of the screen or tap AIM: the view zooms in, shots are tighter and you move slower. Do it again to stop aiming. RELOAD reloads before the magazine runs dry. With a melee weapon in hand, FIRE swings it at whatever is in front of you. The buttons next to FIRE switch guns and use a medkit. The top-right buttons switch the camera view and the flashlight and open SKILLS, BASE and INVENTORY. Your health bar floats above you in third person and sits under the map in first person. The city wraps around: walk or drive off one edge and you come back in on the other side. While any menu is open (inventory, trunk, trader, forge, skills, base or the game menu) a green bubble protects you: zombies already within 14 m disappear and come back 36 to 52 m away, nothing can hurt you, and any that come close are pushed out, until 1.5 seconds after you close it.</p></details>
+  <details id="helpTouch"><summary>Touch controls (phone and tablet)</summary><p>Tap the round button at the top right for the menu wheel (inventory, skills, base, camera, flashlight and the game menu); you can also hold it, slide to an option and let go. The INTERACT button appears when there is something to use: a car, the trader, a forge or your settlement. Move with the joystick in the bottom-left corner; push it all the way out to sprint. CROUCH, next to the joystick, keeps you quiet and low. Drag anywhere else to look. FIRE shoots exactly where the dot points; headshots do double damage. To aim down the sights, double-tap the right half of the screen or tap AIM: the view zooms in, shots are tighter and you move slower. Do it again to stop aiming. RELOAD reloads before the magazine runs dry. With a melee weapon in hand, FIRE swings it at whatever is in front of you. The buttons next to FIRE switch guns and use a medkit. The top-right buttons switch the camera view and the flashlight and open SKILLS, BASE and INVENTORY. Your health bar floats above you in third person and sits under the map in first person. The city wraps around: walk or drive off one edge and you come back in on the other side. While any menu is open (inventory, trunk, trader, forge, skills, base or the game menu) a green bubble protects you: zombies already within 14 m disappear and come back 36 to 52 m away, nothing can hurt you, and any that come close are pushed out, until 1.5 seconds after you close it.</p></details>
   <details id="helpPad"><summary id="helpPadT">Controller</summary><p id="helpPadP">Xbox, PlayStation and most Bluetooth or USB controllers work. Left stick: move, or steer in a car. Left stick click: sprint. D-pad down: crouch (builds a wall at your base). Right stick: look. Right trigger: fire, or gas in a car. Left trigger: aim down the sights (hold), or brake and reverse in a car. Right stick click: reload. A / Cross: drive, exit, repair or trade. B / Circle: medkit. X / Square: switch gun. Y / Triangle: camera view. LB: turret. RB: trap. D-pad up: flashlight. D-pad down: wall. D-pad left: base. View/Share: inventory. Start/Options: menu. D-pad right or Menu/Options: skills. In menus, the D-pad or left stick moves between buttons, A presses, B closes, and the right stick scrolls.</p></details>
   <details><summary>Noise and being seen</summary><p>Zombies don't know where you are until they hear or see you. The panel under the map shows how much noise you are making and how aware they are: Hidden (nobody knows you are there), Heard (some are coming to check the noise) or Spotted (they are chasing you, with how many). Standing still is silent, walking makes some noise, sprinting more, and gunshots and engines can be heard from far away; melee is much quieter. Crouching makes you quiet and harder to see, and so does turning off your flashlight. Zombies that lose track of you start wandering again. Hordes that raid your settlement always know where it is.</p></details>
   <details id="helpKey"><summary>Keyboard and mouse (PC)</summary><p>Click the game to capture the mouse (Esc lets it go). Mouse: look. Left click or Space: fire. R: reload. Right click (hold): aim down the sights, which zooms in, tightens your shots and slows you down. Z toggles aiming instead of holding. Mouse wheel or Q: switch weapon (guns and melee). WASD or the arrow keys: move; Shift: sprint; C: crouch; in a car W is gas and S brakes and reverses. E: drive, get out, repair, trade or forge. H: medkit. V: camera view. F: flashlight. T: turret. G: trap. X: wall. B: base. K: skills. I or Tab: inventory. M or Esc: menu.</p></details>
@@ -2714,6 +2731,61 @@ Rebirth.start(function () {
   var ads = { hold: false, toggle: false, k: 0, on: false, tap: null };
   // stealth: how loud you are (0..100) and how ready you are to sprint
   var STL = { noise: 0, spike: 0, crouch: false, ck: 0, sprintLatch: false, sprinting: false, sk: 0, stam: 100, stamT: 0, out: false, chase: 0, sus: 0, uiT: 0 };
+  // ---- phone menu wheel: built from whichever top-right buttons are available right now ----
+  var wheelEl = document.getElementById('wheel'), wheelBtnEl = document.getElementById('wheelBtn'), useBtnEl = document.getElementById('useBtn'), WH_ITEMS = [], wheelHot = -1, wheelDrag = null;
+  var WHEEL_IDS = ['invBtn', 'skillsBtn', 'baseBtn', 'viewBtn', 'lightBtn', 'turretBtn', 'trapBtn', 'wallBtn', 'menuBtn'];
+  function openWheel() {
+    if (!running || paused) return;
+    wheelEl.innerHTML = ''; WH_ITEMS = [];
+    WHEEL_IDS.forEach(function (id) {
+      var el = document.getElementById(id); if (!el) return;
+      var opt = /turretBtn|trapBtn|wallBtn/.test(id) ? el.style.display === 'block' : el.style.display !== 'none';
+      if (opt) WH_ITEMS.push({ el: el, label: el.textContent.replace(/\s+/g, ' ').trim() });
+    });
+    var cx = innerWidth / 2, cy = innerHeight / 2, R = Math.min(130, Math.min(innerWidth, innerHeight) * 0.36);
+    WH_ITEMS.forEach(function (it, i) {
+      var a = -Math.PI / 2 + i / WH_ITEMS.length * Math.PI * 2, d = document.createElement('div');
+      d.className = 'wi'; d.textContent = it.label; d.style.left = (cx + Math.cos(a) * R) + 'px'; d.style.top = (cy + Math.sin(a) * R) + 'px';
+      it.a = a; it.d = d; wheelEl.appendChild(d);
+    });
+    var c = document.createElement('div'); c.className = 'wc'; c.textContent = '\u00d7'; c.style.left = cx + 'px'; c.style.top = cy + 'px'; wheelEl.appendChild(c);
+    wheelEl.className = 'open'; wheelHot = -1; releaseKeys(); joy.id = null; joy.dx = joy.dy = 0; look.id = null;
+  }
+  function closeWheel() { wheelEl.className = ''; wheelDrag = null; }
+  function wheelPick(i) { var it = WH_ITEMS[i]; closeWheel(); if (it) it.el.click(); }
+  function wheelAt(x, y) {   // which option a finger points at: by angle, once it is out of the centre
+    var cx = innerWidth / 2, cy = innerHeight / 2, dx = x - cx, dy = y - cy; if (Math.hypot(dx, dy) < 40 || !WH_ITEMS.length) return -1;
+    var a = Math.atan2(dy, dx), best = -1, bd = 9;
+    WH_ITEMS.forEach(function (it, i) { var dd = Math.abs(angDiff(a, it.a)); if (dd < bd) { bd = dd; best = i; } });
+    return best;
+  }
+  function setHot(i) { wheelHot = i; WH_ITEMS.forEach(function (it, j) { it.d.className = 'wi' + (j === i ? ' hot' : ''); }); }
+  // tap the button: the wheel stays open for a tap. Hold it and slide: let go on an option to pick it.
+  wheelBtnEl.addEventListener('pointerdown', function (e) { e.preventDefault(); e.stopPropagation(); if (wheelEl.className === 'open') { closeWheel(); return; } openWheel(); wheelDrag = { x: e.clientX, y: e.clientY, moved: false, id: e.pointerId }; try { wheelBtnEl.releasePointerCapture(e.pointerId); } catch (er) {} });
+  wheelEl.addEventListener('pointermove', function (e) { if (!wheelDrag || e.pointerId !== wheelDrag.id) return; if (Math.hypot(e.clientX - wheelDrag.x, e.clientY - wheelDrag.y) > 20) wheelDrag.moved = true; setHot(wheelAt(e.clientX, e.clientY)); });
+  wheelEl.addEventListener('pointerup', function (e) {
+    if (wheelDrag && e.pointerId === wheelDrag.id) { var moved = wheelDrag.moved; wheelDrag = null; if (moved) { if (wheelHot >= 0) wheelPick(wheelHot); else closeWheel(); } return; }
+    var i = -1; WH_ITEMS.forEach(function (it, j) { var r = it.d.getBoundingClientRect(); if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) i = j; });
+    if (i >= 0) wheelPick(i); else closeWheel();
+  });
+  document.addEventListener('pointermove', function (e) { if (wheelDrag && e.pointerId === wheelDrag.id && wheelEl.className === 'open') { if (Math.hypot(e.clientX - wheelDrag.x, e.clientY - wheelDrag.y) > 20) wheelDrag.moved = true; setHot(wheelAt(e.clientX, e.clientY)); } });
+  document.addEventListener('pointerup', function (e) { if (wheelDrag && e.pointerId === wheelDrag.id && wheelEl.className === 'open' && e.target !== wheelEl && !wheelEl.contains(e.target)) { var moved = wheelDrag.moved; wheelDrag = null; if (moved) { if (wheelHot >= 0) wheelPick(wheelHot); else closeWheel(); } } });
+  // ---- one INTERACT button for cars, the trader, a forge and your settlement ----
+  function interactTarget() {
+    if (drive) return ['EXIT', useCarBtn];
+    if (nearCar) return [whyDead(nearCar) ? (canFix(nearCar) ? 'REPAIR' : 'WRECK') : 'DRIVE', useCarBtn];
+    if (tradeBtn.style.display !== 'none') return ['TRADE', function () { tradeBtn.click(); }];
+    if (forgeBtn.style.display !== 'none') return ['FORGE', function () { forgeBtn.click(); }];
+    if (base && Math.hypot(P.x - base.x, P.z - base.z) < 5) return ['BASE', function () { document.getElementById('baseBtn').click(); }];
+    return null;
+  }
+  useBtnEl.addEventListener('pointerdown', function (e) { e.preventDefault(); e.stopPropagation(); var t = interactTarget(); if (t && running && !paused) t[1](); });
+  function updateUseBtn() {
+    var t = running && !paused ? interactTarget() : null, lbl = t ? t[0] : '';
+    if (useBtnEl.textContent !== lbl && lbl) useBtnEl.textContent = lbl;
+    useBtnEl.classList.toggle('show', !!t);
+    document.body.classList.toggle('playing', running && !paused);
+  }
   function setCrouch(v) { STL.crouch = v && !drive; crouchBtnEl.className = 'btn' + (STL.crouch ? ' on' : ''); }
   function stamMax() { return 100 * (1 + pm('s3')); }
   // a sound the zombies can hear: everything within 0.6 m per point of loudness comes to check it out
@@ -3432,6 +3504,7 @@ Rebirth.start(function () {
     driveBtn.style.display = drive || nearCar ? 'flex' : 'none';
     driveBtn.textContent = drive ? 'EXIT' : nearCar && whyDead(nearCar) ? (canFix(nearCar) ? 'REPAIR' : 'WRECK') : 'DRIVE';
     driveBtn.className = 'btn' + (!drive && nearCar && whyDead(nearCar) && !canFix(nearCar) ? ' dead' : '');
+    updateUseBtn();
     quickCd -= dt;
     fireBtn.style.display = drive ? 'none' : 'flex';
     gasBtn.style.display = brakeBtn.style.display = drive ? 'flex' : 'none';
@@ -4447,13 +4520,17 @@ Rebirth.start(function () {
     var sm = stamMax(); stEl.style.visibility = STL.stam < sm - 0.5 ? 'visible' : 'hidden'; stFill.style.width = Math.round(100 * STL.stam / sm) + '%'; stFill.style.background = STL.out ? '#e0584c' : '#8fd3e8';
   }
   function updateHpBars(dt) {
-    updateStealthUI(dt);
+    updateStealthUI(dt); updateUseBtn();
     if (menuOpen()) { menuT -= dt; if (menuT <= 0) { menuT = 1; renderMenu(); } }
     var lb = trunkCar() ? 'INVENTORY + TRUNK' : 'INVENTORY'; if (lb !== invLbl) { invLbl = lb; invBtn.textContent = lb; }
     var f = Math.max(0, Math.min(1, P.hp / P.maxHp)); hpLag = hpLag > f ? Math.max(f, hpLag - dt * 0.6) : f;
     if (!running) { hpTag.style.display = hpFix.style.display = 'none'; return; }
     var hp = Math.max(0, Math.ceil(P.hp));
-    stealthEl.style.top = firstPerson ? '232px' : '200px';
+    // keep the left column clear of the joystick: short screens put the stealth panel beside the minimap
+    var mr = miniEl.getBoundingClientRect(), shortScr = innerHeight < 520;
+    hpFix.style.top = Math.round(mr.bottom + 6) + 'px';
+    if (shortScr) { stealthEl.style.left = Math.round(mr.right + 6) + 'px'; stealthEl.style.top = Math.round(Math.max(mr.top, 76)) + 'px'; }
+    else { stealthEl.style.left = '10px'; stealthEl.style.top = Math.round((firstPerson ? hpFix.getBoundingClientRect().bottom || mr.bottom + 30 : mr.bottom) + 6) + 'px'; }
     if (firstPerson) { hpTag.style.display = 'none'; hpFix.style.display = 'block'; setBar(hpFix, f, 'HP ' + hp + ' / ' + P.maxHp); return; }
     hpFix.style.display = 'none';
     if (drive) hpV.set(drive.x, drive.y + (drive.kind === 'van' ? 2.6 : 2.2), drive.z); else hpV.set(P.x, P.y + 2.05, P.z);
