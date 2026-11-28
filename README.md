@@ -49,3 +49,10 @@ Edit `/opt/rebirth/data/rebirth.yml` (the `env` lines), then run `sudo systemctl
   creates its own security keys.
 - `data/modules/index.js` holds Rebirth's server rules: invites, and Steam and Epic sign-in checks.
 - `www/` is the game.
+
+
+## Encrypted content
+
+Some game content is stored encrypted in `data/modules/index.js` and only runs on a server that has the matching key.
+Put it in `/opt/rebirth/data/rebirth.yml` under `runtime > env` as `- "SECRETS_KEY=<32 characters>"`, then `sudo systemctl restart rebirth`.
+Without the key the server runs normally and that content is simply off.

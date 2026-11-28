@@ -67,7 +67,6 @@ Rebirth.content.radio = [
       "There's a word for what's happening that I keep hearing from the lab people. Evolution. I hate that word now.",
       "A cure exists, or it could. That's what the notes said. Find the doctors and you find the answer. Find the wrong one and, well.",
       "Every survivor you bring home makes this city a little less dead. Keep bringing them home.",
-      "There's a station way down the dial, four point six, that just counts. An old ham radio guy swears it counts streets. Probably nothing.",
       "I've seen the dead stop, all at once, and look up. Like they heard something none of us can. Then they go back to it. Sleep well."
     ],
     when: {
@@ -213,8 +212,6 @@ Rebirth.content.radio = [
       ['c', "Has anyone heard from the people at the capitol building? It went quiet three days ago. Over."],
       ['d', "Saw some idiot driving off the edge of the map last night and coming back on the other side. Wait. How. Over."],
       ['b', "Whoever's playing rock music on one oh three five, you're crazy and I love you. Over."],
-      ['b', "Anybody else listen to the counting on four point six? Every night one group gets read twice. Like it matters. Over."],
-      ['d', "Our camp's ham radio guy says the counting starts at Osage and Bayaud. Zero and zero. West to east, north to south. He also talks to his toaster. Over."],
       ['a', "Lights out, everybody. Stay quiet tonight. Redbird out."]
     ]
   },

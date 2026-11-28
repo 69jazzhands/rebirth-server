@@ -650,7 +650,7 @@
       rGap = 99;
     } else if (s.kind === 'numbers') {
       if (!rNum) {
-        // today's message: five groups, one of them read twice (the game decides which, and what it means)
+        // today's message (the groups can come from the server)
         var day = Math.floor(Date.now() / 86400000), spec = radio.numbersFn ? radio.numbersFn(day) : null, groups = [], key = 0;
         if (spec) { groups = spec.groups.map(function (g) { return g.split('').join(', '); }); key = spec.key; }
         else { var rr = rng(hash('numbers:' + day)); for (var g = 0; g < 5; g++) { var grp = []; for (var d = 0; d < 5; d++) grp.push(Math.floor(rr() * 10)); groups.push(grp.join(', ')); } }
