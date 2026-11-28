@@ -1,6 +1,6 @@
 {
-"version": "0.9.5",
-"build": 202611271412,
+"version": "0.9.6",
+"build": 202611280208,
 "files": {
 "MODDING.md": [
 9109,
@@ -354,9 +354,21 @@
 2738,
 "ea9a0035c58b65fbb51dd5224b9dda848ccfec5f6b41b24949d34e03aeef94de"
 ],
+"icons/apple-touch-icon.png": [
+21656,
+"0bcc335aed36ced86678678f975e89bbad6b2ed763b8b09833e1471be4b6e7a6"
+],
+"icons/icon-192.png": [
+26218,
+"23d0fe7a141636057e4f54f80b188a4302f69e071bb5ac5f6970bf2ae7f86aca"
+],
+"icons/icon-512.png": [
+103903,
+"b1d4a9eb569f1c86dfc5c623c2c95fe0d37078d17f22e2e0ecebf1b941ef48d6"
+],
 "index.html": [
-454348,
-"7ae04a65c05610dc7563a67a0f3dd5e9f229aa23253f2043f9bf90fe4d5977a8"
+456752,
+"65df48043042fdd0d38a5bf52aeda346dcfa76250ed236a46194b6ac5c2ce722"
 ],
 "lib/basis/basis_transcoder.js": [
 57529,
@@ -377,6 +389,10 @@
 "lib/three-r187.js": [
 1023045,
 "1b240e4f8e55e5555eda0b8e8bebfbf9eb1e7b2f47e535078af5067e34cea3ba"
+],
+"manifest.webmanifest": [
+543,
+"0ab613ed20c6a8d99aff6b46a1708f17762b3ef93ba46953a428c520c7cc8887"
 ],
 "mods/example-pack/mod.js": [
 2641,
