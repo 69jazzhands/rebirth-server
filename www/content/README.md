@@ -8,6 +8,7 @@ Everything the game is made of, sorted by kind. Each file starts with a comment 
   - loot.js: zombie drops and rarity
 - **zombies/types.js:** every zombie type
 - **characters/characters.js:** the 3D people used for each role
+- **radio/stations.js:** every radio station: Eyes in the Sky, the music stations, the survivor CB and the shortwave bands (what each host says, and the words song titles are made from)
 - **world/**
   - streets.js: street names and diagonals
   - landmarks.js: where landmark buildings stand

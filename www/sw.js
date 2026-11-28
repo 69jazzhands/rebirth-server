@@ -1,7 +1,7 @@
 /* Rebirth web app: keeps the game's files on the device so it opens instantly and plays offline.
    Each build has its own cache; a new build downloads only the files whose hash changed (from version.json),
    copies the rest from the old cache, then takes over and tells the game an update is ready. */
-var BUILD = '202611281805', CACHE = 'rebirth-' + BUILD;
+var BUILD = '202611281827', CACHE = 'rebirth-' + BUILD;
 self.addEventListener('install', function (e) {
   e.waitUntil((async function () {
     var vj = await fetch('version.json', { cache: 'no-store' }), man = await vj.clone().json();

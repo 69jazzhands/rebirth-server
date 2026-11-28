@@ -94,6 +94,16 @@
   #turretBtn { top: 330px; color: #8fd3e8; display: none; }
   #trapBtn { top: 372px; color: #c9d0cd; display: none; }
   #wallBtn { top: 414px; color: #d8b98a; display: none; }
+  #radioBtn { top: 456px; color: #f0a8a0; }
+  #radio { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); display: none; align-items: center; gap: 6px; z-index: 4; background: #0d100ed9; border: 1px solid #e8e4d833; border-radius: 12px; padding: 5px 6px; max-width: min(320px, 46vw); }
+  #radio.on { display: flex; }
+  #radio button { background: #1c211e; color: #e8e4d8; border: 1px solid #55655a; border-radius: 8px; min-width: 34px; height: 34px; font-size: 15px; font-weight: 700; touch-action: manipulation; }
+  #radio #rOff { font-size: 11px; color: #f0a8a0; }
+  #rInfo { flex: 1; min-width: 0; text-align: center; line-height: 1.15; }
+  #rInfo b { display: block; font-size: 12px; color: #f2c14e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #rInfo small { display: block; font-size: 11px; color: #c9c5b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #rSub { position: fixed; left: 50%; bottom: 62px; transform: translateX(-50%); width: min(560px, 60vw); text-align: center; font-size: 13px; line-height: 1.35; color: #e8e4d8; text-shadow: 0 1px 3px #000, 0 0 8px #000; pointer-events: none; z-index: 3; opacity: 0; transition: opacity .4s; }
+  #rSub b { color: #f2c14e; font-weight: 600; }
   .ptag { position: fixed; left: 0; top: 0; width: 80px; margin-left: -40px; pointer-events: none; z-index: 2; display: none; }
   .ptag .hpnum { color: #9fe0b0; }
   #mpName { width: 100%; box-sizing: border-box; background: #0e1110; color: #e8e4d8; border: 1px solid #3a423d; border-radius: 8px; padding: 10px; font-size: 15px; margin: 4px 0 8px; }
@@ -167,6 +177,7 @@
   body.short #fire { right: 18px; bottom: 22px; width: 80px; height: 80px; }
   body.short #wpn { right: 112px; bottom: 22px; width: 58px; height: 58px; }body.short #med { right: 112px; bottom: 90px; width: 58px; height: 58px; }
   body.short #drive { right: 180px; bottom: 22px; width: 62px; height: 62px; }body.short #trade { right: 180px; bottom: 94px; width: 62px; height: 62px; }body.short #forge { right: 252px; bottom: 22px; width: 62px; height: 62px; }
+  body.short #radioBtn { top: 164px; right: 10px; } body.short #radio { bottom: 10px; } body.short #rSub { bottom: 56px; font-size: 12px; }
   body.short #mini { top: 56px; width: 96px; height: 96px; }body.short #hint { display: none; }body.short #msg { top: 168px; }
   .card p { margin: 6px 0 12px; font-size: 14px; line-height: 1.45; color: #c9c5b8; }
   button.main { width: 100%; margin-top: 10px; background: #f2c14e; color: #171b19; border: 0; border-radius: 8px; padding: 12px; font-size: 16px; font-weight: 700; }
@@ -211,6 +222,9 @@
 <button class="tbtn" id="turretBtn" data-key="T">TURRET</button>
 <button class="tbtn" id="trapBtn" data-key="G">TRAP</button>
 <button class="tbtn" id="wallBtn" data-key="X">WALL</button>
+<button class="tbtn" id="radioBtn" data-key="Y">RADIO</button>
+<div id="rSub"></div>
+<div id="radio"><button id="rPrev" aria-label="Previous station">&lsaquo;</button><div id="rInfo"><b id="rName"></b><small id="rNow"></small></div><button id="rNext" aria-label="Next station">&rsaquo;</button><button id="rOff">OFF</button></div>
 
 <div class="panel" id="intro" style="display:flex"><div class="card">
   <h2>Rebirth: 3D test</h2>
@@ -228,7 +242,7 @@
   <details id="helpPad"><summary id="helpPadT">Controller</summary><p id="helpPadP">Xbox, PlayStation and most Bluetooth or USB controllers work. Left stick: move, or steer in a car. Left stick click: sprint. D-pad down: crouch (builds a wall at your base). Right stick: look. Right trigger: fire, or gas in a car. Left trigger: aim down the sights (hold), or brake and reverse in a car. Right stick click: reload. A / Cross: drive, exit, repair or trade. B / Circle: medkit. X / Square: switch gun. Y / Triangle: camera view. LB: turret. RB: trap. D-pad up: flashlight. D-pad down: wall. D-pad left: base. View/Share: inventory. Start/Options: menu. D-pad right or Menu/Options: skills. In menus, the D-pad or left stick moves between buttons, A presses, B closes, and the right stick scrolls.</p></details>
   <details><summary>Noise and being seen</summary><p>Zombies don't know where you are until they hear or see you. The panel under the map shows how much noise you are making and how aware they are: Hidden (nobody knows you are there), Heard (some are coming to check the noise) or Spotted (they are chasing you, with how many). Standing still is silent, walking makes some noise, sprinting more, and gunshots and engines can be heard from far away; melee is much quieter. Crouching makes you quiet and harder to see, and so does turning off your flashlight. Zombies that lose track of you start wandering again. Hordes that raid your settlement always know where it is.</p></details>
   <details><summary>Explosions and destruction</summary><p>Cars can be wrecked: shoot them, hit them or blow them up, and once they burn out they stay wrecks. Burning barrels explode when shot. Pipe bombs (craft them in the INVENTORY from scrap and a fuel can) are thrown with FIRE and go off two seconds later. Explosions crack and char the closed buildings around them; enough of them bring a building down into rubble, crushing whatever is inside. Everyone in a multiplayer room sees the same wrecks and rubble.</p></details>
-  <details id="helpKey"><summary>Keyboard and mouse (PC)</summary><p>Click the game to capture the mouse (Esc lets it go). Mouse: look. Left click or Space: fire. R: reload. Right click (hold): aim down the sights, which zooms in, tightens your shots and slows you down. Z toggles aiming instead of holding. Mouse wheel or Q: switch weapon (guns and melee). WASD or the arrow keys: move; Shift: sprint; C: crouch; in a car W is gas and S brakes and reverses. E: drive, get out, repair, trade or forge. H: medkit. V: camera view. F: flashlight. T: turret. G: trap. X: wall. B: base. K: skills. I or Tab: inventory. M or Esc: menu.</p></details>
+  <details id="helpKey"><summary>Keyboard and mouse (PC)</summary><p>Click the game to capture the mouse (Esc lets it go). Mouse: look. Left click or Space: fire. R: reload. Right click (hold): aim down the sights, which zooms in, tightens your shots and slows you down. Z toggles aiming instead of holding. Mouse wheel or Q: switch weapon (guns and melee). WASD or the arrow keys: move; Shift: sprint; C: crouch; in a car W is gas and S brakes and reverses. E: drive, get out, repair, trade or forge. H: medkit. V: camera view. F: flashlight. T: turret. G: trap. X: wall. B: base. K: skills. I or Tab: inventory. Y: radio on or off. N: next station (Shift+N: back). M or Esc: menu.</p></details>
   <details><summary>Loot, money and the shop</summary><p>Every zombie drops a few items, rarer ones less often: common scrap and ammo, uncommon (green ring) medkits, vehicle parts and fuel, rare (blue ring) gems, and epic (purple ring) teeth and special zombie parts. In multiplayer every kill drops the same loot for every player, so everyone gets their own copy, and buildings hold the same items for everyone. Anything within 5 metres of you is picked up automatically. Each backpack slot holds one stack (100 scrap, 50 gems or teeth, 25 medkits, 25 vehicle parts, 15 fuel cans, 5 of a zombie part); money and ammo take no space. Every stack over your slot limit slows you 20%, and five over pins you in place until you drop something from the INVENTORY. Upgrade the backpack at the shop for more slots. Every car also has its own trunk (sedan 125 slots, pickup 175, van 250): stand next to one or sit in it and open INVENTORY to store or take loot. Some abandoned cars still have things in the trunk. Sell it at the shop: 1000 silver = 1 gold, 1000 gold = 1 diamond. The shop is a safe zone the dead cannot enter, and you heal while you are there. It sells guns (SMG, shotgun, rifle), ammo for each, medkits, fuel, parts and upgrades.</p></details>
   <details><summary>Cars</summary><p>Walk up to a car and press DRIVE. GAS and BRAKE drive it, and the joystick steers. Hold BRAKE when stopped to reverse. You can run zombies down, but it damages the car. Cars with a flat tyre or wreck damage can be repaired with three vehicle parts. Flipped cars stay wrecked.</p></details>
   <details><summary>Mods</summary><p>Rebirth can be modded. Everything in the world lives in sorted content files: weapons, shop goods and loot in content/items, zombie types in content/zombies, people in content/characters, and streets, props, furniture, building types and landmark buildings in content/world. Mods go in the mods folder and can add new weapons, zombies, shop items, characters, props, furniture and buildings. Turn mods on or off under Settings. The full guide is MODDING.md in the game files.</p></details>
@@ -267,7 +281,9 @@
   <div class="row" style="flex-wrap:wrap"><span>Sound<small>Every sound is made live on your device. Headphones bring out the low rumble and where zombies are.</small></span><div style="flex:1 1 100%;display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:13px;color:#c9c5b8">
     <span>Master</span><input type="range" id="volMaster" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volMasterN"></b>
     <span>Music</span><input type="range" id="volMusic" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volMusicN"></b>
-    <span>Effects</span><input type="range" id="volSfx" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volSfxN"></b></div></div>
+    <span>Effects</span><input type="range" id="volSfx" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volSfxN"></b>
+    <span>Radio</span><input type="range" id="volRadio" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volRadioN"></b></div></div>
+  <div class="row"><span>Radio<small id="radioNote">Eight stations, from Eyes in the Sky to the static at the far end of the dial. Zombies can hear it.</small></span><div class="btns"><button class="act" id="mRadioPrev">&lsaquo;</button><button class="act" id="mRadioOn">Turn on</button><button class="act" id="mRadioNext">&rsaquo;</button></div></div>
   <div class="row" id="serverRow" style="flex-wrap:wrap"><span>Game server<small id="serverNote">Online play, friends and invites in the apps, PC and console browsers go through your Rebirth server. Enter its address, like rebirth-game.duckdns.org.</small></span><div style="display:flex;gap:6px;flex:1 1 100%"><input id="serverIn" placeholder="Server address" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1;min-width:0;background:#0e1110;color:#e8e4d8;border:1px solid #3a423d;border-radius:8px;padding:10px;font-size:15px"><button class="act" id="serverSave">Connect</button></div></div>
   <div class="row" style="flex-wrap:wrap"><span>Mods<small id="modNote">Extra content from the mods folder. Changes apply after a restart. Everyone in a multiplayer room needs the same mods on.</small></span><div id="modList" style="flex:1 1 100%;display:flex;flex-direction:column;gap:6px"></div></div>
   <div class="row"><span>Gore<small id="goreNote">Blood, wounds and limbs coming off.</small></span><div class="btns"><button class="act" id="goreBtn">Full</button></div></div>
@@ -402,6 +418,7 @@ window.rebirthUpdateReady = function (version) {
 <script src="content/world/furniture.js"></script>
 <script src="content/world/building-themes.js"></script>
 <script src="content/world/landmarks.js"></script>
+<script src="content/radio/stations.js"></script>
 <script src="content/world/buildings/stateCapitol.js"></script>
 <script src="content/world/buildings/civicPark.js"></script>
 <script src="content/world/buildings/unionStation.js"></script>
@@ -2802,7 +2819,7 @@ Rebirth.start(function () {
   var STL = { noise: 0, spike: 0, crouch: false, ck: 0, sprintLatch: false, sprinting: false, sk: 0, stam: 100, stamT: 0, out: false, chase: 0, sus: 0, uiT: 0 };
   // ---- phone menu wheel: built from whichever top-right buttons are available right now ----
   var wheelEl = document.getElementById('wheel'), wheelBtnEl = document.getElementById('wheelBtn'), useBtnEl = document.getElementById('useBtn'), WH_ITEMS = [], wheelHot = -1, wheelDrag = null;
-  var WHEEL_IDS = ['invBtn', 'skillsBtn', 'baseBtn', 'viewBtn', 'lightBtn', 'turretBtn', 'trapBtn', 'wallBtn', 'menuBtn'];
+  var WHEEL_IDS = ['invBtn', 'skillsBtn', 'baseBtn', 'viewBtn', 'lightBtn', 'radioBtn', 'turretBtn', 'trapBtn', 'wallBtn', 'menuBtn'];
   function openWheel() {
     if (!running || paused) return;
     wheelEl.innerHTML = ''; WH_ITEMS = [];
@@ -2920,6 +2937,7 @@ Rebirth.start(function () {
     var k = e.key.toLowerCase(); keys[k] = true; if (k === ' ') e.preventDefault();
     if (k === 'e' && !e.repeat && !paused) { if (!drive && !nearCar && tradeBtn.style.display === 'none' && forgeBtn.style.display !== 'none') forgeBtn.click(); else useCarBtn(); }
     if (k === 't' && !e.repeat) deployTurret();
+    if (k === 'y' && !e.repeat && running) radioToggle(); if (k === 'n' && !e.repeat && running) radioTune(e.shiftKey ? -1 : 1);
     if (k === 'q' && !e.repeat && !paused) switchWeapon(); if (k === 'r' && !e.repeat && !paused && running) manualReload(); if (k === 'h' && !e.repeat) useMed();
     if (k === 'v' && !e.repeat) toggleView(); if (k === 'f' && !e.repeat) toggleLight(); if (k === 'z' && !e.repeat) setAdsToggle(!ads.toggle); if (k === 'c' && !e.repeat && running && !paused) setCrouch(!STL.crouch);
     if (!e.repeat && !openPanel() && running) {
@@ -5451,7 +5469,7 @@ Rebirth.start(function () {
       var fp = freePts(); skillsBtn.textContent = 'SKILLS' + (fp > 0 ? ' (' + fp + ')' : '');
       hudT -= dt; if (hudT <= 0) { hudT = 0.2; drawHud(); }
       drawGps(); drawMini();
-      audioTick(dt);
+      audioTick(dt); radioTick(dt);
     } catch (err) { msg.textContent = 'Something went wrong: ' + err.message; }
     requestAnimationFrame(frame);
   }
@@ -5530,11 +5548,58 @@ Rebirth.start(function () {
     });
   }
   var camDir2 = new T.Vector3();
-  [['volMaster', 'master'], ['volMusic', 'music'], ['volSfx', 'sfx']].forEach(function (v) {
+
+  /* ---------------- the radio (stations: content/radio/stations.js, sound: lib/rebirth-audio.js) ---------------- */
+  var RAD = SND.radio || null, radioEl = document.getElementById('radio'), rSubEl = document.getElementById('rSub'), rSubT = 0, radioNoiseT = 0;
+  var RS = { kills: 0, idleT: 0, lx: 0, lz: 0 };
+  function radioShowName() { if (!RAD) return; var s = RAD.station(); document.getElementById('rName').textContent = s ? s.freq + '  ' + s.name : ''; document.getElementById('mRadioOn').textContent = RAD.on ? 'Turn off' : 'Turn on'; document.getElementById('radioBtn').textContent = RAD.on ? 'RADIO ON' : 'RADIO'; }
+  function radioToggle() {
+    if (!RAD) { say('Radio needs sound, which this device does not support.'); return; }
+    var on = !RAD.on; RAD.power(on); radioEl.classList.toggle('on', on); radioShowName(); SND.play('switch');
+    if (!on) { rSubEl.style.opacity = 0; document.getElementById('rNow').textContent = ''; }
+  }
+  function radioTune(d) { if (!RAD) return; if (!RAD.on) { radioToggle(); return; } RAD.tune(d); radioShowName(); }
+  if (RAD) {
+    RAD.list = Rebirth.content.radio || [];
+    try { var lastSt = +localStorage.getItem('rebirthRadioSt'); if (lastSt >= 0 && lastSt < RAD.list.length) RAD.idx = lastSt; } catch (e) {}
+    RAD.text = function (t, info) {
+      if (info) { if (/^\S+.*\s{2}/.test(t) && RAD.station() && t.indexOf(RAD.station().name) >= 0) { document.getElementById('rNow').textContent = ''; } else document.getElementById('rNow').textContent = t; return; }
+      var s = RAD.station(); rSubEl.innerHTML = '<b>' + (s ? s.name : 'Radio') + ':</b> ' + t.replace(/[<>&]/g, ''); rSubEl.style.opacity = 1; rSubT = 2.5 + t.length * 0.06;
+    };
+    // what Eyes in the Sky can see happening to you
+    RAD.ctxFn = function () {
+      var w = W(), near = 99, scr = false, bru = false;
+      zombies.forEach(function (z) { if (z.dead) return; var d = wdist(z.x, z.z, P.x, P.z); if (d < 30 && z.ai === 'screamer') scr = true; if (d < 25 && z.ai === 'brute') bru = true; if ((z.aw || 0) >= AW_SUS) near = Math.min(near, d); });
+      var c = { horde: STL.chase >= 3, spotted: STL.chase > 0, lowhp: P.hp > 0 && P.hp / P.maxHp < 0.3, infected: !!P.inf, car: !!drive, safe: inSafe || shielded(), screamer: scr, brute: bru,
+        kills: kills - RS.kills >= 25, noammo: !w.melee && !w.throw && P.inv.mags[P.weapon] <= 0 && P.inv.ammo[P.weapon] <= 0, light: lightOn && near < 15, idle: RS.idleT > 60 };
+      if (c.kills) RS.kills = kills;
+      return c;
+    };
+    document.getElementById('radioBtn').addEventListener('click', radioToggle);
+    document.getElementById('rOff').addEventListener('click', radioToggle);
+    document.getElementById('rPrev').addEventListener('click', function () { radioTune(-1); });
+    document.getElementById('rNext').addEventListener('click', function () { radioTune(1); });
+    document.getElementById('mRadioOn').addEventListener('click', radioToggle);
+    document.getElementById('mRadioPrev').addEventListener('click', function () { radioTune(-1); });
+    document.getElementById('mRadioNext').addEventListener('click', function () { radioTune(1); });
+    radioShowName();
+  }
+  function radioTick(dt) {
+    if (!RAD) return;
+    if (rSubT > 0) { rSubT -= dt; if (rSubT <= 0) rSubEl.style.opacity = 0; }
+    if (!RAD.on) return;
+    try { localStorage.setItem('rebirthRadioSt', RAD.idx); } catch (e) {}
+    RAD.car = !!drive;
+    radioEl.style.display = running && !paused ? '' : 'none';
+    if (Math.hypot(P.x - RS.lx, P.z - RS.lz) > 0.5) { RS.idleT = 0; RS.lx = P.x; RS.lz = P.z; } else RS.idleT += dt;
+    // zombies hear your radio: a little from the handheld, a lot from a car stereo
+    radioNoiseT -= dt; if (radioNoiseT <= 0 && running && (SND.vol ? SND.vol.radio : 1) > 0.05) { radioNoiseT = 1; makeNoise(drive ? 24 : 10, P.x, P.z); }
+  }
+  [['volMaster', 'master'], ['volMusic', 'music'], ['volSfx', 'sfx'], ['volRadio', 'radio']].forEach(function (v) {
     var el = document.getElementById(v[0]), lab = document.getElementById(v[0] + 'N'); if (!el) return;
     function show() { lab.textContent = el.value + '%'; }
     el.value = Math.round(((SND.vol || {})[v[1]] === undefined ? 0.8 : SND.vol[v[1]]) * 100); show();
-    el.addEventListener('input', function () { var o = {}; o[v[1]] = el.value / 100; if (SND.volumes) SND.volumes(o); show(); });
+    el.addEventListener('input', function () { var o = {}; o[v[1]] = el.value / 100; if (v[1] === 'radio' && SND.radio) SND.radio.volume(o.radio); else if (SND.volumes) SND.volumes(o); show(); });
   });
   // live game helpers for mods (Rebirth.game): read the player and zombies, show messages, spawn, give items
   Rebirth.game = {

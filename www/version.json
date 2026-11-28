@@ -1,6 +1,6 @@
 {
-"version": "0.9.8",
-"build": 202611281805,
+"version": "0.9.9",
+"build": 202611281827,
 "files": {
 "MODDING.md": [
 9109,
@@ -295,8 +295,8 @@
 "7ede050f36ae83f2993aa0770d9b9b351b8d5ac3f25502570c1f3dff285cb8e5"
 ],
 "content/README.md": [
-689,
-"ab15fc19a3d6d6c125d8b2c6aadfa14e608c77f1c82d2a8f1cfb36470f0eee80"
+875,
+"a0ae9c57db533c555021b370555af65811b45270bc4951a947f0dc263e21e655"
 ],
 "content/characters/characters.js": [
 839,
@@ -313,6 +313,10 @@
 "content/items/weapons.js": [
 3719,
 "c1deb62bf0ad39e33588cb9858ed4705bf352eaba712bc3bfa89378a290ab17d"
+],
+"content/radio/stations.js": [
+18075,
+"34acfac77124328a63eaee29ebf44b2dfae3d21550af7725175bcf514eef0aad"
 ],
 "content/world/building-themes.js": [
 1260,
@@ -367,8 +371,8 @@
 "b1d4a9eb569f1c86dfc5c623c2c95fe0d37078d17f22e2e0ecebf1b941ef48d6"
 ],
 "index.html": [
-468150,
-"4427cb8ca00eea2597ca4bbb35c5a85a6b510eed33acc5c7d165b31fdec45da8"
+474559,
+"b3eac3b1ba9f6ef5debf6bb5708b1fd876c53ab7e499fa13cc6a786e7841b7d0"
 ],
 "lib/basis/basis_transcoder.js": [
 57529,
@@ -387,8 +391,8 @@
 "b1ca7c1ead75a70b9097fdeae5e8bd25d234011871a323e1ccaf8138d88f7bb5"
 ],
 "lib/rebirth-audio.js": [
-44844,
-"738a8e446da362a53ab61d1f2983a42f990993dec771f8430cac51976fd49fdd"
+64585,
+"c94c7c235473c762d3751f83ee49fe628077323a64915b2d46e6ce34c97aa80b"
 ],
 "lib/three-r187.js": [
 1023045,

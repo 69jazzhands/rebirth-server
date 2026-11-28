@@ -70,7 +70,7 @@
     try { localStorage.setItem('rebirthVol', JSON.stringify(A.vol)); } catch (e) {}
     if (!ctx) return; var t = ctx.currentTime;
     master.gain.setTargetAtTime(A.vol.master, t, 0.05); sfxBus.gain.setTargetAtTime(A.vol.sfx, t, 0.05);
-    ambBus.gain.setTargetAtTime(A.vol.sfx * 0.8, t, 0.05); musBus.gain.setTargetAtTime(A.vol.music, t, 0.05);
+    ambBus.gain.setTargetAtTime(A.vol.sfx * 0.8, t, 0.05); musBus.gain.setTargetAtTime(A.vol.music, t, 0.05); if (A._radioBus) A._radioBus.gain.setTargetAtTime(A.vol.radio, t, 0.05);
   };
 
   /* ---------- listener + 3D placement ---------- */
@@ -458,6 +458,215 @@
     chain(m, shaper(3), g); g.connect(musBus); var s = ctx.createGain(); s.gain.value = 0.8; g.connect(s); s.connect(verbIn);
   };
 
+  /* ---------- the radio: stations from content/radio/stations.js ----------
+     Everything on the radio goes through a small-speaker filter with static under it. Voices use the device's own
+     speech (or Android's, through the app), and fall back to a garbled radio voice with subtitles where there is none.
+     Music stations make their songs live; each song is picked from the real clock, so everyone tuned in hears the same thing. */
+  var radio = A.radio = { on: false, idx: 0, car: false, list: [], text: function () {}, ctxFn: null };
+  var rIn, rOut, rStatic, rFilt, rBed = null, rSpeaking = false, rGap = 0, rSay = 0, rNext = 0, rSong = null, rBeat = 0, rBags = {}, rCool = {}, rNum = null, rCbI = -1, rAlertI = 0, rTones = 0, rCrackle = null;
+  function rBuild() {
+    rIn = ctx.createGain(); rIn.gain.value = 1;
+    var hp = filt('highpass', 260, 0.7); rFilt = filt('lowpass', 4200, 0.9); var sh = shaper(1.6);
+    rOut = ctx.createGain(); rOut.gain.value = 0; chain(rIn, hp, rFilt, sh, rOut);
+    var bus = ctx.createGain(); bus.gain.value = A.vol.radio === undefined ? 0.8 : A.vol.radio; A._radioBus = bus; rOut.connect(bus); bus.connect(menuLP);
+    var s = noise(ctx.currentTime, 1e7), sf = filt('bandpass', 2400, 0.5); rStatic = ctx.createGain(); rStatic.gain.value = 0; chain(s, sf, rStatic, bus);
+  }
+  if (A.vol.radio === undefined) A.vol.radio = 0.8;
+  var rng = function (seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
+  function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function mf(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  function st() { return radio.list[radio.idx]; }
+
+  // ---- voices ----
+  var sysVoices = [];
+  function loadVoices() { try { sysVoices = speechSynthesis.getVoices().filter(function (v) { return /^en/i.test(v.lang); }); } catch (e) {} }
+  if (window.speechSynthesis) { loadVoices(); try { speechSynthesis.addEventListener('voiceschanged', loadVoices); } catch (e) { speechSynthesis.onvoiceschanged = loadVoices; } }
+  var droid = function () { var R0 = window.RebirthAndroid; return !!(R0 && typeof R0.speak === 'function' && (typeof R0.ttsReady !== 'function' || R0.ttsReady())); };
+  var primed = false;
+  var rDone = null; window.rebirthSpeechDone = function () { var d = rDone; rDone = null; if (d) d(); };
+  function speakNow(text, v, done) {
+    var vol = A.vol.master * A.vol.radio * (radio.car ? 1 : 0.85);
+    var fin = false, finish = function () { if (fin) return; fin = true; rSpeaking = false; ducker(false); if (done) done(); };
+    rSpeaking = true; ducker(true);
+    var guess = 1500 + text.split(/\s+/).length * 430 / (v.rate || 1);
+    radio.text(text);
+    try {
+      if (droid()) { rDone = finish; window.RebirthAndroid.speak(text, v.pitch || 1, v.rate || 1, vol, v.pick || 0); setTimeout(finish, guess + 4000); return; }
+      if (window.speechSynthesis && sysVoices.length) {
+        var u = new SpeechSynthesisUtterance(text); u.voice = sysVoices[(v.pick || 0) % sysVoices.length]; u.pitch = v.pitch || 1; u.rate = v.rate || 1; u.volume = Math.max(0.05, Math.min(1, vol));
+        u.onend = finish; u.onerror = finish; speechSynthesis.cancel(); speechSynthesis.speak(u); setTimeout(finish, guess + 6000); return;
+      }
+    } catch (e) {}
+    // no speech engine: a garbled voice through the radio, with the words on screen
+    var t = ctx.currentTime, words = text.split(/\s+/).length, n = Math.round(words * 1.6), tt = t, f0 = 120 * (v.pitch || 1);
+    for (var i = 0; i < n; i++) { var d = R(0.09, 0.2) / (v.rate || 1); voice(tt, { f0: f0 * R(0.85, 1.2), dur: d, v: pick(['ah', 'ee', 'uh', 'oo', 'aw']), rough: 0.05, grit: 2, g: 0.25, a: 0.015 }).connect(rIn); tt += d + (Math.random() < 0.18 ? R(0.12, 0.3) : 0.02); }
+    setTimeout(finish, (tt - t) * 1000 + 300);
+  }
+  function stopSpeech() { rDone = null; try { if (droid() && window.RebirthAndroid.stopSpeaking) window.RebirthAndroid.stopSpeaking(); if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} rSpeaking = false; }
+  function ducker(on) { if (!rSong || !rSong.out) return; rSong.out.gain.setTargetAtTime(on ? 0.25 : 1, ctx.currentTime, 0.3); }
+  function lineFor(s, item) { if (typeof item === 'string') return [Object.keys(s.voices || { x: 1 })[0], item]; return item; }
+  function vFor(s, id) { var vs = s.voices || {}; return vs[id] || vs[Object.keys(vs)[0]] || { pitch: 1, rate: 1, pick: 0 }; }
+  function sayLine(s, item, done) { var l = lineFor(s, item); speakNow(l[1], vFor(s, l[0]), done); }
+  // shuffle bags so lines don't repeat until the pool runs out
+  function bag(key, arr) { var b = rBags[key]; if (!b || !b.length) { b = rBags[key] = arr.map(function (x, i) { return i; }); for (var i = b.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = b[i]; b[i] = b[j]; b[j] = t; } } return arr[b.pop()]; }
+
+  // ---- beds and sounds that only the radio uses ----
+  function setBed(kind) {
+    if (rBed) { var old = rBed; old.g.gain.setTargetAtTime(0, ctx.currentTime, 0.3); setTimeout(function () { old.stop(); }, 1500); rBed = null; }
+    if (!kind) return;
+    var t = ctx.currentTime, g = ctx.createGain(); g.gain.value = 0; g.gain.setTargetAtTime(kind === 'drone' ? 0.1 : 0.07, t, 1); var oscs = [];
+    var notes = kind === 'drone' ? [mf(38), mf(38) * 1.01, mf(45), mf(73) * 1.003] : [mf(57), mf(64), mf(69), mf(72)];
+    notes.forEach(function (f) { var o = ctx.createOscillator(); o.type = kind === 'drone' ? 'sawtooth' : 'triangle'; o.frequency.value = f; var lp = filt('lowpass', kind === 'drone' ? 500 : 900); o.connect(lp); lp.connect(g); o.start(t); oscs.push(o); });
+    if (kind === 'drone') { var w = osc('sine', 0.3, t, 1e6), wg = ctx.createGain(); wg.gain.value = 40; w.connect(wg); var sw = osc('sine', 1800, t, 1e6), swg = ctx.createGain(); swg.gain.value = 0.02; wg.connect(sw.frequency); sw.connect(swg); swg.connect(g); oscs.push(w, sw); }   // shortwave whistle
+    g.connect(rIn); rBed = { g: g, stop: function () { oscs.forEach(function (o) { try { o.stop(); } catch (e) {} }); } };
+  }
+  function squelch(t) { burst(t, { type: 'highpass', f: 1800, dur: 0.25, g: 0.35 }).connect(rIn); }
+  function roger(t) { var o = osc('sine', 1200, t, 0.12), e = env(t, 0.005, 0.15, 0.1); o.connect(e); e.connect(rIn); }
+  function alertTones(t) { for (var i = 0; i < 6; i++) { var o = osc('square', i % 2 ? 1046 : 784, t + i * 0.45, 0.42), e = env(t + i * 0.45, 0.01, 0.12, 0.05, 0.36), lp = filt('lowpass', 2500); chain(o, lp, e, rIn); } return 2.9; }
+  function chime(t) { [72, 76, 79, 76, 72, 67].forEach(function (m, i) { var o = osc('sine', mf(m), t + i * 0.35, 1.2), e = env(t + i * 0.35, 0.005, 0.12, 1.1); o.connect(e); e.connect(rIn); }); return 2.6; }
+
+  // ---- music: a new song every slot, built from the clock so it's the same for everyone ----
+  var SLOT = 150;
+  function songAt(s, slot) {
+    var r = rng(hash(s.id + ':' + slot)), T = s.titles || { a: ['Untitled'], b: ['Song'], band: ['Unknown'] }, P = function (a) { return a[Math.floor(r() * a.length)]; };
+    var style = s.style, song = { slot: slot, title: P(T.a) + ' ' + P(T.b), band: P(T.band), style: style, r: r };
+    if (style === 'oldies') { song.bpm = 112 + Math.floor(r() * 30); song.key = 53 + Math.floor(r() * 7); song.prog = P([[[0, 'M'], [9, 'm'], [2, 'm'], [7, '7']], [[0, 'M'], [5, 'M'], [0, 'M'], [7, '7']], [[0, 'M'], [9, 'm'], [5, 'M'], [7, '7']]]); }
+    else if (style === 'rock') { song.bpm = 118 + Math.floor(r() * 28); song.key = 40 + Math.floor(r() * 5); song.prog = P([[[0, 'p'], [10, 'p'], [5, 'p'], [0, 'p']], [[0, 'p'], [8, 'p'], [10, 'p'], [0, 'p']], [[0, 'p'], [7, 'p'], [9, 'p'], [5, 'p']], [[0, 'p'], [3, 'p'], [10, 'p'], [5, 'p']]]); }
+    else { song.bpm = 70 + Math.floor(r() * 14); song.key = 50 + Math.floor(r() * 7); song.prog = P([[[0, 'M7'], [9, 'm7'], [5, 'M7'], [7, 'm7']], [[2, 'm7'], [7, '7'], [0, 'M7'], [0, 'M7']], [[0, 'm7'], [5, 'm7'], [10, 'M7'], [3, 'M7']]]); }
+    song.len = 128 + Math.floor(r() * 14);
+    song.motif = []; for (var i = 0; i < 8; i++) song.motif.push(r() < 0.35 ? null : Math.floor(r() * 5));
+    song.motif2 = []; for (i = 0; i < 8; i++) song.motif2.push(r() < 0.4 ? null : Math.floor(r() * 5));
+    return song;
+  }
+  function chordNotes(root, q) { var iv = { M: [0, 4, 7], m: [0, 3, 7], '7': [0, 4, 7, 10], p: [0, 7, 12], M7: [0, 4, 7, 11, 14], m7: [0, 3, 7, 10, 14] }[q] || [0, 4, 7]; return iv.map(function (x) { return root + x; }); }
+  function nt(t, f, dur, g, type, out, a) { var o = osc(type || 'triangle', f, t, dur), e = env(t, a || 0.005, g, dur); o.connect(e); e.connect(out); return o; }
+  function hat(t, g, dur, out, f) { burst(t, { type: 'highpass', f: f || 7000, dur: dur || 0.04, g: g }).connect(out); }
+  function kick(t, g, out) { thump(t, 120, 42, 0.22, g).connect(out); }
+  function snare(t, g, out, brush) { if (brush) burst(t, { f: 1800, q: 0.6, a: 0.02, dur: 0.16, g: g }).connect(out); else { burst(t, { f: 2200, q: 0.5, dur: 0.14, g: g }).connect(out); thump(t, 190, 150, 0.08, g * 0.6, 'triangle').connect(out); } }
+  function guitar(t, notes, dur, g, out) { var m = sum(); notes.forEach(function (n) { var o = osc('sawtooth', mf(n), t, dur), o2 = osc('sawtooth', mf(n) * 1.004, t, dur); o.connect(m); o2.connect(m); }); var e = env(t, 0.004, g, dur), d = shaper(18), lp = filt('lowpass', 2600, 0.8); chain(m, d, lp, e, out); }
+  function playBeat(song, b, t, out) {
+    var spb = 60 / song.bpm, bar = Math.floor(b / 4), bi = b % 4, ch = song.prog[Math.floor(bar / (song.style === 'lowlight' ? 1 : 2)) % song.prog.length];
+    var root = song.key + ch[0], notes = chordNotes(root, ch[1]), r = song.r, sec = Math.floor(bar / 8) % 2;   // verse / chorus
+    var pent = [0, 2, 4, 7, 9], mpent = [0, 3, 5, 7, 10];
+    if (song.style === 'oldies') {
+      var sw = spb * 2 / 3;
+      var walk = [root - 12, root - 12 + (bi === 1 ? (ch[1] === 'm' ? 3 : 4) : 7), root - 12 + 7, root - 12 + (r() < 0.5 ? 11 : 1)][bi];
+      nt(t, mf(walk), spb * 0.9, 0.42, 'triangle', out);
+      hat(t, 0.06, 0.12, out, 6000); if (bi % 2) { hat(t + sw, 0.05, 0.08, out, 6500); snare(t, 0.12, out, true); }
+      if (bi === 0) kick(t, 0.25, out);
+      if (bi % 2) notes.forEach(function (n) { var src = ctx.createBufferSource(); src.buffer = pluckBuf(mf(n + 12)); var e = env(t, 0.003, 0.12, 0.3); src.connect(e); e.connect(out); src.start(t); src.stop(t + 0.5); });
+      var mo = (bar % 8 < 6 ? song.motif : song.motif2), k1 = mo[bi * 2], k2 = mo[bi * 2 + 1];
+      [[k1, 0], [k2, sw]].forEach(function (p) { if (p[0] === null || p[0] === undefined) return; var m = song.key + 12 + pent[p[0]] + (bar % 4 === 3 ? 2 : 0), f = mf(m); nt(t + p[1], f, 0.9, 0.12, 'sine', out); nt(t + p[1], f * 4, 0.25, 0.02, 'sine', out); });
+    } else if (song.style === 'rock') {
+      var e8 = spb / 2;
+      for (var h = 0; h < 2; h++) {
+        var tt = t + h * e8;
+        hat(tt, 0.07, 0.035, out);
+        nt(tt, mf(root - 12), e8 * 0.9, 0.35, 'sawtooth', out);
+        if (sec === 0) guitar(tt, notes, e8 * 0.6, 0.16, out);
+      }
+      if (sec === 1 && bi === 0) guitar(t, notes, spb * 4, 0.18, out);
+      if (bi === 0 || bi === 2) kick(t, 0.6, out); if (bi === 2 && r() < 0.5) kick(t + e8, 0.4, out);
+      if (bi === 1 || bi === 3) snare(t, 0.4, out);
+      if (sec === 1 && song.motif[(bar * 4 + bi) % 8] !== null) { var lm = song.key + 24 + mpent[song.motif[(bar * 4 + bi) % 8]]; var o = osc('square', mf(lm), t, spb), e = env(t, 0.01, 0.06, spb * 0.9), dd = shaper(8), lp2 = filt('lowpass', 3000); chain(o, dd, lp2, e, out); }
+    } else {
+      if (bi === 0) notes.forEach(function (n, i) { nt(t + i * 0.012, mf(n), spb * 4, 0.05, 'sine', out, 0.02); nt(t, mf(n) * 2.01, spb * 1.5, 0.008, 'sine', out); });
+      if (bi === 0) kick(t, 0.25, out); if (bi === 2) { kick(t + spb / 2, 0.18, out); burst(t, { f: 2500, q: 4, dur: 0.03, g: 0.12 }).connect(out); }
+      var mm = song.motif[(bar * 4 + bi) % 8]; if (mm !== null && r() < 0.6) { var src = ctx.createBufferSource(); src.buffer = pluckBuf(mf(song.key + 12 + pent[mm])); var ge = ctx.createGain(); ge.gain.value = 0.22; src.connect(ge); ge.connect(out); src.start(t + (r() < 0.5 ? 0 : spb / 2)); }
+    }
+  }
+  function startSong(s, slot, offset) {
+    endSong();
+    var song = songAt(s, slot); song.out = ctx.createGain(); song.out.gain.value = 1; song.lvl = ctx.createGain(); song.lvl.gain.value = 2.8; song.out.connect(song.lvl); song.lvl.connect(rIn); 
+    song.t0 = ctx.currentTime - offset; song.nextB = Math.max(0, Math.floor(offset * song.bpm / 60));
+    rSong = song;
+    if (s.style === 'lowlight' || s.style === 'oldies') startCrackle(s.style === 'oldies' ? 0.06 : 0.035);
+    radio.text(song.title + ' – ' + song.band, true);
+  }
+  function endSong() { if (rSong) { var o = rSong.out; o.gain.setTargetAtTime(0, ctx.currentTime, 0.2); setTimeout(function () { try { o.disconnect(); } catch (e) {} }, 1200); rSong = null; } stopCrackle(); }
+  function startCrackle(g) { stopCrackle(); var s = noise(ctx.currentTime, 1e6), f = filt('highpass', 3000), gg = ctx.createGain(); gg.gain.value = g * 0.3; chain(s, f, gg, rIn); rCrackle = { s: s, g: gg, k: g }; }
+  function stopCrackle() { if (rCrackle) { try { rCrackle.s.stop(); } catch (e) {} rCrackle = null; } }
+
+  // ---- what each kind of station does next ----
+  function tuneIn() {
+    var s = st(); if (!s) return;
+    stopSpeech(); endSong(); setBed(s.kind === 'talk' ? s.bed : null);
+    rGap = 0.6; rNext = 0; rCbI = -1; rAlertI = 0; rTones = 0; rNum = null;
+    var t = ctx.currentTime; burst(t, { f: 1800, q: 0.4, dur: 0.35, g: 0.5 }).connect(rIn);   // the dial sweeping
+    rStatic.gain.setTargetAtTime((1 - (s.signal || 0.8)) * 0.16 + 0.012, t, 0.2);
+    rFilt.frequency.setTargetAtTime(/AM/.test(s.freq) ? 3000 : s.kind === 'cb' || /MHz/.test(s.freq) ? 2600 : 4800, t, 0.1);
+    radio.text(s.freq + '  ' + s.name, true);
+    if (s.kind === 'music') { var now = Date.now() / 1000, slot = Math.floor(now / SLOT), off = now - slot * SLOT, song = songAt(s, slot); if (off < song.len - 3) startSong(s, slot, off); else rGap = 0.5; }
+    if (s.intro && s.intro.length) { rGap = 99; setTimeout(function () { if (radio.on && st() === s) sayLine(s, bag(s.id + 'intro', s.intro), function () { rGap = R(2, 4); }); }, 700); }
+  }
+  function contextLine(s) {
+    if (!s.when || !radio.ctxFn) return null;
+    var c = radio.ctxFn() || {}, now = Date.now();
+    var order = ['horde', 'infected', 'lowhp', 'screamer', 'brute', 'spotted', 'noammo', 'light', 'kills', 'car', 'safe', 'idle'];
+    for (var i = 0; i < order.length; i++) { var k = order[i]; if (c[k] && s.when[k] && (!rCool[k] || now - rCool[k] > (k === 'horde' || k === 'lowhp' ? 40000 : 90000))) { rCool[k] = now; return bag(s.id + k, s.when[k]); } }
+    return null;
+  }
+  radio.update = function (dt) {
+    var s = st(); if (!radio.on || !s || !rIn) return;
+    rOut.gain.setTargetAtTime(radio.car ? 1 : 0.8, ctx.currentTime, 0.2);
+    var t = ctx.currentTime;
+    if (rCrackle && Math.random() < dt * 6) burst(t, { type: 'highpass', f: 2500, dur: 0.004, g: rCrackle.k * 3 }).connect(rIn);
+    if (s.kind === 'music') {
+      if (rSong) {
+        var spb = 60 / rSong.bpm;
+        while (rSong.t0 + rSong.nextB * spb < t + 0.25) { var bt = rSong.t0 + rSong.nextB * spb; if (bt > t - 0.05) try { playBeat(rSong, rSong.nextB, Math.max(t, bt), rSong.out); } catch (e) {} rSong.nextB++; }
+        if (t - rSong.t0 > rSong.len) { var ended = rSong.slot; endSong(); rGap = 1.2; rSay = ended; }
+        return;
+      }
+      if (rSpeaking) return;
+      rGap -= dt; if (rGap > 0) return;
+      var now = Date.now() / 1000, slot = Math.floor(now / SLOT), off = now - slot * SLOT;
+      if (rSay !== -1 && s.lines) { rSay = -1; sayLine(s, bag(s.id, s.lines), function () { rGap = 0.6; }); return; }
+      var sg = songAt(s, slot);
+      if (off < sg.len - 3) { startSong(s, slot, off); return; }
+      rGap = Math.min(SLOT - off + 0.1, 8); if (Math.random() < 0.5 && s.lines) rSay = 0; return;
+    }
+    if (rSpeaking) return;
+    rGap -= dt; if (rGap > 0) return;
+    if (s.kind === 'talk') {
+      var ln = s.id === 'eyes' ? contextLine(s) : null;
+      if (!ln) { var pools = [['lines', 5], ['tips', 3], ['lore', 2]].filter(function (p) { return s[p[0]] && s[p[0]].length; }), tot = pools.reduce(function (a, p) { return a + p[1]; }, 0), x = Math.random() * tot, chosen = pools[0];
+        for (var i = 0; i < pools.length; i++) { x -= pools[i][1]; if (x <= 0) { chosen = pools[i]; break; } } ln = bag(s.id + chosen[0], s[chosen[0]]); }
+      sayLine(s, ln, function () { rGap = R(2.5, 6); });
+    } else if (s.kind === 'alert') {
+      if (rAlertI % 4 === 0 && !rTones) { rTones = 1; rGap = alertTones(t) + 0.6; return; }
+      rTones = 0; var a = s.lines[Math.floor(rAlertI / 1) % s.lines.length]; rAlertI++;
+      sayLine(s, a, function () { rGap = 1.5; });
+    } else if (s.kind === 'cb') {
+      if (rCbI < 0) rCbI = Math.floor(Date.now() / 20000) % s.lines.length;
+      var c = s.lines[rCbI % s.lines.length]; rCbI++;
+      squelch(t); setTimeout(function () { if (radio.on && st() === s) sayLine(s, c, function () { roger(ctx.currentTime); rGap = R(4, 12); }); }, 300);
+      rGap = 99;
+    } else if (s.kind === 'numbers') {
+      if (!rNum) { var day = Math.floor(Date.now() / 86400000), rr = rng(hash('numbers:' + day)), groups = []; for (var g = 0; g < 5; g++) { var grp = []; for (var d = 0; d < 5; d++) grp.push(Math.floor(rr() * 10)); groups.push(grp.join(', ')); }
+        rNum = { q: ['chime', s.lines[0], s.lines[1]].concat(groups, [s.lines[3]], groups, [s.lines[2], 'pause']), i: 0 }; }
+      var item = rNum.q[rNum.i++]; if (rNum.i >= rNum.q.length) rNum.i = 0;
+      if (item === 'chime') { rGap = chime(t) + 0.5; return; }
+      if (item === 'pause') { rGap = 12; radio.text('', true); return; }
+      sayLine(s, item, function () { rGap = 1.6; });
+    }
+  };
+  radio.power = function (on, idx) {
+    if (!ctx) { try { A.unlock(); } catch (e) {} }
+    if (!ctx) return;
+    if (!rIn) rBuild();
+    if (idx !== undefined) radio.idx = (idx + radio.list.length) % radio.list.length;
+    radio.on = on;
+    // iPhone only lets a page speak if the first words start from a tap: say nothing, right now, while we have one
+    if (on && !primed && window.speechSynthesis && !droid()) { primed = true; try { var u0 = new SpeechSynthesisUtterance(' '); u0.volume = 0; speechSynthesis.speak(u0); } catch (e) {} }
+    if (on) { rOut.gain.setTargetAtTime(radio.car ? 1 : 0.8, ctx.currentTime, 0.05); tuneIn(); }
+    else { stopSpeech(); endSong(); setBed(null); rOut.gain.setTargetAtTime(0, ctx.currentTime, 0.05); rStatic.gain.setTargetAtTime(0, ctx.currentTime, 0.05); radio.text('', true); }
+  };
+  radio.tune = function (dir) { if (!radio.list.length) return; radio.idx = (radio.idx + dir + radio.list.length) % radio.list.length; if (radio.on) tuneIn(); };
+  radio.volume = function (v) { A.vol.radio = v; if (A._radioBus) A._radioBus.gain.setTargetAtTime(v, ctx.currentTime, 0.05); try { localStorage.setItem('rebirthVol', JSON.stringify(A.vol)); } catch (e) {} };
+  radio.station = st;
+  radio._state = function () { return { song: rSong && { title: rSong.title, beat: rSong.nextB, t: ctx.currentTime - rSong.t0, len: rSong.len }, gap: rGap, say: rSay, speaking: rSpeaking }; };
+
   /* ---------- per-frame: music, ambience, menus ---------- */
   var mood = { level: 0, safe: false, menu: false, inside: false, hp: 1, tired: false, near: 99 };
   A.mood = function (level, o) { mood.level = level; for (var k in o) mood[k] = o[k]; };
@@ -466,5 +675,7 @@
     var t = ctx.currentTime;
     menuLP.frequency.setTargetAtTime(mood.menu ? 900 : 20000, t, 0.12);
     try { ambience.update(dt, mood); music.update(dt, mood); } catch (e) {}
+    try { if (radio.on) radio.update(dt); } catch (e) { A._radioErr = String(e && e.stack || e); }
+    musBus.gain.setTargetAtTime(A.vol.music * (radio.on ? 0.35 : 1), t, 0.4);
   };
 })();
