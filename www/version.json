@@ -1,6 +1,6 @@
 {
-"version": "0.9.7",
-"build": 202611280238,
+"version": "0.9.8",
+"build": 202611281805,
 "files": {
 "MODDING.md": [
 9109,
@@ -367,8 +367,8 @@
 "b1d4a9eb569f1c86dfc5c623c2c95fe0d37078d17f22e2e0ecebf1b941ef48d6"
 ],
 "index.html": [
-458414,
-"b35372ecf2c0e02aca77a365cfd9ab8f9a04bf1d3e5dee935055d0d8d35b93e7"
+468150,
+"4427cb8ca00eea2597ca4bbb35c5a85a6b510eed33acc5c7d165b31fdec45da8"
 ],
 "lib/basis/basis_transcoder.js": [
 57529,
@@ -385,6 +385,10 @@
 "lib/rebirth-api.js": [
 4925,
 "b1ca7c1ead75a70b9097fdeae5e8bd25d234011871a323e1ccaf8138d88f7bb5"
+],
+"lib/rebirth-audio.js": [
+44844,
+"738a8e446da362a53ab61d1f2983a42f990993dec771f8430cac51976fd49fdd"
 ],
 "lib/three-r187.js": [
 1023045,

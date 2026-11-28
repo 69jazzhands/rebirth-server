@@ -264,6 +264,10 @@
   <div class="row" id="leaveRow" style="display:none"><span>Back to the public city<small>Leave your private game.</small></span><div class="btns"><button class="act" id="leaveCode">Leave</button></div></div>
   <div class="sec">Settings</div>
   <div class="row" style="flex-wrap:wrap"><span>Graphics: <b id="gfxQName"></b><small id="gfxNote"></small></span><div class="btns" style="flex:1 1 100%;min-width:160px;flex-wrap:wrap"><input type="range" id="gfxQ" min="1" max="6" step="1" style="width:100%;accent-color:#9fe0b0"><div style="display:flex;flex-basis:100%;justify-content:space-between;font-size:11px;color:#a9a596"><span>Faster</span><span>Prettier</span></div></div></div>
+  <div class="row" style="flex-wrap:wrap"><span>Sound<small>Every sound is made live on your device. Headphones bring out the low rumble and where zombies are.</small></span><div style="flex:1 1 100%;display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:13px;color:#c9c5b8">
+    <span>Master</span><input type="range" id="volMaster" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volMasterN"></b>
+    <span>Music</span><input type="range" id="volMusic" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volMusicN"></b>
+    <span>Effects</span><input type="range" id="volSfx" min="0" max="100" step="5" style="accent-color:#9fe0b0"><b id="volSfxN"></b></div></div>
   <div class="row" id="serverRow" style="flex-wrap:wrap"><span>Game server<small id="serverNote">Online play, friends and invites in the apps, PC and console browsers go through your Rebirth server. Enter its address, like rebirth-game.duckdns.org.</small></span><div style="display:flex;gap:6px;flex:1 1 100%"><input id="serverIn" placeholder="Server address" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1;min-width:0;background:#0e1110;color:#e8e4d8;border:1px solid #3a423d;border-radius:8px;padding:10px;font-size:15px"><button class="act" id="serverSave">Connect</button></div></div>
   <div class="row" style="flex-wrap:wrap"><span>Mods<small id="modNote">Extra content from the mods folder. Changes apply after a restart. Everyone in a multiplayer room needs the same mods on.</small></span><div id="modList" style="flex:1 1 100%;display:flex;flex-direction:column;gap:6px"></div></div>
   <div class="row"><span>Gore<small id="goreNote">Blood, wounds and limbs coming off.</small></span><div class="btns"><button class="act" id="goreBtn">Full</button></div></div>
@@ -387,6 +391,7 @@ window.rebirthUpdateReady = function (version) {
 <script src="lib/three-r187.js"></script>
 <!-- game content: every table the game reads, sorted by kind (see MODDING.md) -->
 <script src="lib/rebirth-api.js"></script>
+<script src="lib/rebirth-audio.js"></script>
 <script src="content/items/weapons.js"></script>
 <script src="content/items/shop.js"></script>
 <script src="content/items/loot.js"></script>
@@ -2004,7 +2009,7 @@ Rebirth.start(function () {
     unlock: function () { if (!this.enabled) return; try { localStorage.setItem('rebirthDual', '1'); } catch (e) {} say('Secret unlocked: you can now master a second class. Open SKILLS.'); }
   };
   function freePts() { return level() - spent(); }
-  function addXp(n) { var b = level(); xp += n; if (level() > b) say('Skill point earned. Tap SKILLS to spend it.'); }
+  function addXp(n) { var b = level(); xp += n; if (level() > b) SND.play('levelup'); if (level() > b) say('Skill point earned. Tap SKILLS to spend it.'); }
   function isCls(id) { return SK.cls === id || (!!SK.cls2 && SK.cls2 === id); }
   function ultOn(id) { return (SK.cls === id && SK.ult) || (!!SK.cls2 && SK.cls2 === id && SK.ult2); }
   var WEAPONS = Rebirth.content.guns;   // content/items/weapons.js
@@ -2027,7 +2032,12 @@ Rebirth.start(function () {
   var yaw = Math.PI, pitch = -0.12, firstPerson = false, lightOn = true;
   var zombies = [], decals = [], kills = 0, time = 0, spawnT = 0.3, running = false, paused = true, msgT = 0, fpsS = 60, recoil = 0;
   var hud = document.getElementById('hud'), msg = document.getElementById('msg'), hurtEl = document.getElementById('hurt');
-  function say(t) { msg.textContent = t; msgT = 3; }
+  function say(t) {
+    msg.textContent = t; msgT = 3;
+    if (/forged|crafted|repaired|smelted|patched/i.test(t)) SND.play('anvil', null, { vol: 0.7, life: 2 });
+    else if (/blowtorch|quick fix/i.test(t)) SND.play('torch');
+  }
+  document.addEventListener('click', function (e) { var b = e.target && e.target.closest && e.target.closest('button, summary'); if (b && !b.classList.contains('btn')) SND.play('click'); }, true);
 
   function collide(p, r, skip) {
     for (var i = 0; i < colliders.length; i++) {
@@ -2164,7 +2174,7 @@ Rebirth.start(function () {
       if (z.cd <= 0 && d < 22 && !inSafe && !blocked(z.x + dx * 0.5, 1.3, z.z + dz * 0.5)) {
         z.cd = 2.2;
         var tt = d / 11, tx = P.x, tz = P.z, sy = groundY(z.x, z.z) + 1.5;
-        var m = new T.Mesh(spitGeo, spitMat); m.position.set(z.x, sy, z.z); scene.add(m);
+        var m = new T.Mesh(spitGeo, spitMat); m.position.set(z.x, sy, z.z); scene.add(m); sfx('spit', z.x, z.z, { kind: 'spitter' });
         spits.push({ m: m, vx: (tx - z.x) / tt, vz: (tz - z.z) / tt, vy: (P.y + 1.0 - sy + 0.5 * 9.8 * tt * tt) / tt, life: 3 });
       }
     }
@@ -2180,7 +2190,7 @@ Rebirth.start(function () {
         hit = true; if (P.hp <= 0) { scene.remove(b.m); spits.splice(i, 1); onDeath(); return; }
       }
       if (by < groundY(bx, bz) + 0.05 || b.life <= 0 || blocked(bx, by, bz) || isSafe(bx, bz)) hit = true;
-      if (hit) { if (by < groundY(bx, bz) + 0.3) addDecalColor(bx, bz); scene.remove(b.m); spits.splice(i, 1); }
+      if (hit) { sfx('acid', bx, bz, { y: by, vol: 0.8 }); if (by < groundY(bx, bz) + 0.3) addDecalColor(bx, bz); scene.remove(b.m); spits.splice(i, 1); }
     }
     for (var j = screamRings.length - 1; j >= 0; j--) {
       var r = screamRings[j]; r.t += dt; var sc = 1 + r.t * 30; r.m.scale.set(sc, sc, 1); r.m.material.opacity = Math.max(0, 0.8 - r.t * 1.1);
@@ -2337,6 +2347,7 @@ Rebirth.start(function () {
   }
   function pickUp(l) {
     var I = P.inv;
+    SND.play(l.kind === 'silver' || l.kind === 'gold' || l.kind === 'diamond' ? 'coin' : l.kind === 'scrap' || l.kind === 'part' || l.kind === 'parts' ? 'metalpick' : 'pickup', null, { vol: 0.7 });
     if (l.home && pm('b4') && Math.random() < 0.5 * pm('b4')) { I.gem++; say('Rare find: +1 gem.'); }
     if (l.kind === 'ammo') {
       var owned = WORDER.filter(function (id) { return I.guns[id]; }), id = RNG() < 0.7 && !W().melee ? P.weapon : pick(owned.length ? owned : ['pistol']), n = Math.round((WEAPONS[id].pickup || WEAPONS[id].box || 6) * (1 + pm('c7')));
@@ -2387,6 +2398,7 @@ Rebirth.start(function () {
   var turret = null, turretCd = 0, turretBtn = document.getElementById('turretBtn');
   var turretMat = mat(0x5f7f9a);
   function deployTurret() {
+    setTimeout(function () { if (turret) sfx('turret', turret.x, turret.z); }, 0);
     if (paused || !ultOn('engineer') || drive) return;
     if (turretCd > 0) { say('Turret recharging: ' + Math.ceil(turretCd) + 's.'); return; }
     if (turret) scene.remove(turret.g);
@@ -2424,7 +2436,7 @@ Rebirth.start(function () {
       if (best) {
         turret.head.rotation.y = Math.atan2(best.x - turret.x, best.z - turret.z);
         if (turret.cool <= 0) {
-          turret.cool = time - turret.born < 16 * pm('e8') ? 0.2 : 0.4; best.hp -= 14 * (1 + pm('e5')); best.stag = 0.12; if (best.hp <= 0) zKill(best);
+          sfx('shot', turret.x, turret.z, { kind: 'turret', vol: 0.6 }); turret.cool = time - turret.born < 16 * pm('e8') ? 0.2 : 0.4; best.hp -= 14 * (1 + pm('e5')); best.stag = 0.12; if (best.hp <= 0) zKill(best);
           tmpA.set(turret.x, groundY(turret.x, turret.z) + 0.9, turret.z); tmpB.set(best.x, groundY(best.x, best.z) + 1.2, best.z);
           tracerGeo.setFromPoints([tmpA, tmpB]); tracer.material.opacity = 0.7;
         }
@@ -2631,7 +2643,7 @@ Rebirth.start(function () {
     var m = new T.MeshLambertMaterial({ color: 0x8a6a42 }), g = new T.Mesh(boxGeo(hw * 2, 1.7, hd * 2), m), gy = groundY(wx, wz);
     g.position.set(wx, gy + 0.85, wz); g.castShadow = g.receiveShadow = true; scene.add(g);
     var hp = 80 * (1 + pm('e1')), col = { x0: wx - hw, x1: wx + hw, z0: wz - hd, z1: wz + hd, h: gy + 1.7, wall: 1 }; colliders.push(col);
-    walls.push({ g: g, m: m, col: col, hp: hp, max: hp }); P.inv.scrap -= cost; navDirty = true;
+    walls.push({ g: g, m: m, col: col, hp: hp, max: hp }); SND.play('build'); P.inv.scrap -= cost; navDirty = true;
   }
   function wallHits(z, dt) {
     z.wzT = (z.wzT || 0) - dt;
@@ -2655,7 +2667,7 @@ Rebirth.start(function () {
     var plate = new T.Mesh(boxGeo(1.2, 0.05, 1.2), mat(0x3a3d40)); plate.position.y = 0.03; g.add(plate);
     var sp = new T.Group(); g.add(sp);
     for (var i = 0; i < 9; i++) { var c = new T.Mesh(spikeGeo, mat(0xb0b6ba)); c.position.set((i % 3 - 1) * 0.35, 0.16, (Math.floor(i / 3) - 1) * 0.35); sp.add(c); }
-    g.position.set(x, gy, z); scene.add(g); traps.push({ g: g, sp: sp, x: x, z: z, cd: 0 }); P.inv.scrap -= cost;
+    g.position.set(x, gy, z); scene.add(g); traps.push({ g: g, sp: sp, x: x, z: z, cd: 0 }); P.inv.scrap -= cost; sfx('clank', x, z);
   }
   function updateSettlement(dt) {
     var bb = document.getElementById('baseBtn'); bb.style.display = drive ? 'none' : 'block';
@@ -2664,7 +2676,7 @@ Rebirth.start(function () {
     document.getElementById('trapBtn').style.display = isCls('engineer') && !drive ? 'block' : 'none';
     for (var t = 0; t < traps.length; t++) {
       var tr = traps[t]; tr.cd -= dt; tr.sp.position.y = tr.cd > 0 ? -0.2 : 0;
-      if (tr.cd <= 0) for (var q = 0; q < zombies.length; q++) { var zz = zombies[q]; if (!zz.dead && Math.hypot(zz.x - tr.x, zz.z - tr.z) < 0.8 + zz.r) { zz.hp -= 40 * (1 + pm('e2')); zz.stun = 1; zz.stag = 0.4; if (zz.hp <= 0) zKill(zz); tr.cd = 30 / (1 + pm('e3')); break; } }
+      if (tr.cd <= 0) for (var q = 0; q < zombies.length; q++) { var zz = zombies[q]; if (!zz.dead && Math.hypot(zz.x - tr.x, zz.z - tr.z) < 0.8 + zz.r) { sfx('trap', tr.x, tr.z); zz.hp -= 40 * (1 + pm('e2')); zz.stun = 1; zz.stag = 0.4; if (zz.hp <= 0) zKill(zz); tr.cd = 30 / (1 + pm('e3')); break; } }
     }
     walls.forEach(function (w) {   // engineers and settlement survivors patch up walls
       var r = 0; if (pm('e0') && Math.hypot(w.col.x0 / 2 + w.col.x1 / 2 - P.x, w.col.z0 / 2 + w.col.z1 / 2 - P.z) < 4) r += 8 * pm('e0');
@@ -2843,7 +2855,7 @@ Rebirth.start(function () {
     useBtnEl.classList.toggle('show', !!t);
     document.body.classList.toggle('playing', running && !paused);
   }
-  function setCrouch(v) { STL.crouch = v && !drive; crouchBtnEl.className = 'btn' + (STL.crouch ? ' on' : ''); }
+  function setCrouch(v) { if (!!v !== !!STL.crouch) SND.play('cloth', null, { vol: 0.8 }); STL.crouch = v && !drive; crouchBtnEl.className = 'btn' + (STL.crouch ? ' on' : ''); }
   function stamMax() { return 100 * (1 + pm('s3')); }
   // a sound the zombies can hear: everything within 0.6 m per point of loudness comes to check it out
   function makeNoise(loud, x, z) {
@@ -2902,7 +2914,7 @@ Rebirth.start(function () {
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (t) { fireBtn.addEventListener(t, function () { firing = false; fireBtn.className = 'btn'; }); });
   var viewBtn = document.getElementById('viewBtn'), lightBtn = document.getElementById('lightBtn');
   function toggleView() { firstPerson = !firstPerson; viewBtn.textContent = firstPerson ? '3RD PERSON' : '1ST PERSON'; }
-  function toggleLight() { lightOn = !lightOn; flash.visible = lightOn; lightBtn.textContent = lightOn ? 'LIGHT ON' : 'LIGHT OFF'; say(lightOn ? 'Flashlight on.' : 'Flashlight off. Good luck.'); }
+  function toggleLight() { SND.play('switch'); lightOn = !lightOn; flash.visible = lightOn; lightBtn.textContent = lightOn ? 'LIGHT ON' : 'LIGHT OFF'; say(lightOn ? 'Flashlight on.' : 'Flashlight off. Good luck.'); }
   viewBtn.addEventListener('click', toggleView); lightBtn.addEventListener('click', toggleLight);
   window.addEventListener('keydown', function (e) {
     var k = e.key.toLowerCase(); keys[k] = true; if (k === ' ') e.preventDefault();
@@ -3033,6 +3045,7 @@ Rebirth.start(function () {
     return best ? { z: best, t: bt, head: part === 'head', part: part, seg: seg } : null;
   }
   function hitZombie(z, dmg, head, fx, fz, part, seg, at, weapon, dist) {
+    if (weapon && weapon !== 'explosion') { var hm = WEAPONS[weapon] && WEAPONS[weapon].melee; sfx(hm ? 'hit' : 'impact', z.x, z.z, { kind: hm ? (HEAVY[weapon] ? 'heavy' : BLADE[weapon] ? 'blade' : '') : 'flesh', vol: hm ? 1 : 0.55, muffle: false }); if (!hm && Math.random() < 0.3) sfx('z_hurt', z.x, z.z, { kind: zKind(z), vol: 0.7 }); }
     var Wp = WEAPONS[weapon]; if (Wp && Wp.melee) dmg *= (1 + pm('o3')) * (1 + 0.4 * pm('k4'));
     if (P.adrT > 0) dmg *= 1.15;
     z.lastW = weapon; if (pm('s8')) z.markT = 12 * pm('s8');
@@ -3165,7 +3178,7 @@ Rebirth.start(function () {
     if (w.melee) { swing(w); return; }
     if (I.mags[P.weapon] <= 0) {
       if (I.ammo[P.weapon] > 0) startReload();
-      else { P.cool = 0.4; if (msgT <= 0) say('Out of ' + w.an.toLowerCase() + '. Switch guns or buy more at the shop.'); }
+      else { P.cool = 0.4; SND.play('dry'); if (msgT <= 0) say('Out of ' + w.an.toLowerCase() + '. Switch guns or buy more at the shop.'); }
       return;
     }
     camera.getWorldDirection(camDir);
@@ -3184,6 +3197,7 @@ Rebirth.start(function () {
         if (h.z.dead || h.z.pend) anyKill = true;
         fxBurst(o.x + shotDir.x * h.t, o.y + shotDir.y * h.t, o.z + shotDir.z * h.t, h.head ? 0xb01a10 : 0x7a1410, h.head ? 14 : 8, 2.2);
       }
+      if (!hitBody && maxT < w.range - 0.1 && pl === 0) sfx('impact', o.x + shotDir.x * maxT, o.z + shotDir.z * maxT, { kind: 'hard', vol: 0.5, muffle: false });
       if (!hitBody && maxT < w.range - 0.1) fxBurst(o.x + shotDir.x * maxT, o.y + shotDir.y * maxT, o.z + shotDir.z * maxT, 0xb8b0a0, 5, 1.6);
       if (pl === 0) endT = anyHit ? t : maxT;
       shootBarrels(o, shotDir, anyHit ? t : maxT + 0.7, minT);
@@ -3214,6 +3228,7 @@ Rebirth.start(function () {
   function explode(b) { b.cd = time + 90; blast(b.x, b.y, b.z, 5.5, 150); say('Boom!'); }
   // an explosion: hurts zombies and you, wrecks cars, and cracks or brings down buildings nearby
   function blast(x, y, z, R, base, noCars) {
+    sfx('explosion', x, z, { y: y + 1, range: 220, roll: 0.7, ref: 6, muffle: false, life: 3 }); if (wdist(x, z, P.x, P.z) < 9) SND.play('earring', null, { vol: 1 - wdist(x, z, P.x, P.z) / 9, life: 4 });
     var dmg = base * (1 + pm('o5'));
     fxBurst(x, y + 0.4, z, 0xff8a2a, 40, 5); fxBurst(x, y + 0.8, z, 0x3a3430, 30, 3);
     muzzle.position.set(x, y + 1, z); muzzle.intensity = 14; addScorch(x, z, R * 0.4);
@@ -3237,7 +3252,7 @@ Rebirth.start(function () {
     c.shell.traverse(function (o) { if (o.isMesh) { o.material = [].concat(o.material).map(function (m) { var k = m.clone(); if (k.color) k.color.multiplyScalar(0.16); if (k.emissive) k.emissive.setHex(0); return k; }); if (o.material.length === 1) o.material = o.material[0]; } });
     var gy = groundY(c.x, c.z);
     if (wrecks.length < 14) { addFire(c.x, gy + 0.9, c.z, wrecks.length < 4); wrecks.push(c); }
-    if (!quiet) blast(c.x, gy, c.z, 6.5, 170, false);
+    if (!quiet) blast(c.x, gy, c.z, 6.5, 170, false); else sfx('explosion', c.x, c.z, { kind: 'car', range: 220, muffle: false, life: 3 });
   }
   function rayCar(o, dir, maxT) {   // nearest car a shot hits: a box around each car, in the car's own frame
     var best = null, bt = maxT;
@@ -3270,6 +3285,7 @@ Rebirth.start(function () {
   }
   var collapsing = [];
   function collapseBldg(bd, quick) {
+    if (bd && bd.col) sfx('collapse', (bd.col.x0 + bd.col.x1) / 2, (bd.col.z0 + bd.col.z1) / 2, { range: 160, muffle: false, life: 5 });
     if (bd.stage >= 3) return; bd.stage = 3; bd.hp = 0;
     collapsing.push({ bd: bd, t: quick ? 1.9 : 0 });
     if (!quick) { say('The building collapses!'); addPlume(bd.x, bd.z, true); shakeT = Math.max(shakeT, Math.max(0.2, 1 - Math.hypot(P.x - bd.x, P.z - bd.z) / 60)); makeNoise(100, bd.x, bd.z); }
@@ -3419,7 +3435,7 @@ Rebirth.start(function () {
     if (P.inv.meds < 1) { say('No medkits. Buy them at the shop.'); return; }
     if (P.hp >= P.maxHp && !P.inf) { say('You are already at full health.'); return; }
     var amt = 50 * (1 + pm('m0')) * (P.hp < P.maxHp / 2 ? 1 + pm('m6') : 1), dur = Math.max(0.35, 2 * (1 - pm('m1')));
-    P.inv.meds--; P.healQ = (P.healQ || 0) + amt; P.healR = amt / dur; P.regenT = 8 * pm('m8');
+    P.inv.meds--; SND.play('heal'); P.healQ = (P.healQ || 0) + amt; P.healR = amt / dur; P.regenT = 8 * pm('m8');
     if (P.inf) { P.inf = null; say('Used a medkit. The infection is gone.'); } else say('Used a medkit.');
   }
   wpnBtn.addEventListener('pointerdown', function (e) { e.preventDefault(); if (!paused) switchWeapon(); });
@@ -4160,6 +4176,7 @@ Rebirth.start(function () {
   document.getElementById('closeShop').addEventListener('click', function () { shopPanel.style.display = 'none'; paused = false; });
   var onRescue = function () {};
   function onDeath() {
+    SND.play('death'); SND.stinger(1);
     if (pm('m4') && !(P.windT > 0) && !drive) { P.windT = 180; P.hp = Math.max(1, maxHpNow() * pm('m4')); P.inf = null; say('Second wind! You get back up.'); return; }
     paused = true; releaseKeys(); if (drive) exitCar();
     var title = document.getElementById('overTitle'), text = document.getElementById('overText'), btn = document.getElementById('again');
@@ -4866,7 +4883,7 @@ Rebirth.start(function () {
   function nkNote(n) {
     if (!n || n.code !== 101) return;
     var c = typeof n.content === 'string' ? nkDecode(n.content) : n.content; if (!c || !c.room) return;
-    NK.invites[n.sender_id || c.from] = c;
+    NK.invites[n.sender_id || c.from] = c; SND.play('invite');
     document.getElementById('inviteToastT').textContent = (c.name || 'A friend') + (c.plat ? ' (' + c.plat + ')' : '') + ' invited you to their game.';
     var t = document.getElementById('inviteToast'); t.style.display = 'flex'; t._room = c.room;
     say((c.name || 'A friend') + ' invited you. Open MENU to join.');
@@ -5175,7 +5192,7 @@ Rebirth.start(function () {
   var rTracers = [];
   for (var ti = 0; ti < 8; ti++) { var tg = new T.BufferGeometry().setFromPoints([new T.Vector3(), new T.Vector3()]), tl = new T.Line(tg, new T.LineBasicMaterial({ color: 0xffe2a0, transparent: true, opacity: 0 })); tl.frustumCulled = false; scene.add(tl); rTracers.push(tl); }
   var rtI = 0, tagV = new T.Vector3();
-  function remoteShot(s) { var L = rTracers[rtI++ % rTracers.length]; L.geometry.setFromPoints([new T.Vector3(s[1], s[2], s[3]), new T.Vector3(s[4], s[5], s[6])]); L.material.opacity = 0.8; }
+  function remoteShot(s) { sfx('shot', s[1], s[3], { kind: 'pistol', y: s[2], vol: 0.8, range: 160, sonic: true }); var L = rTracers[rtI++ % rTracers.length]; L.geometry.setFromPoints([new T.Vector3(s[1], s[2], s[3]), new T.Vector3(s[4], s[5], s[6])]); L.material.opacity = 0.8; }
   function makeTag() { var d = document.createElement('div'); d.className = 'ptag'; d.innerHTML = '<div class="hpnum"></div><div class="hpbar"><i class="fill"></i></div>'; document.body.appendChild(d); return d; }
   function setCarPose(c, x, z, ang, k) {
     if (Math.abs(x - c.x) > 30 || Math.abs(z - c.z) > 30) { c.x = x; c.z = z; }
@@ -5434,9 +5451,91 @@ Rebirth.start(function () {
       var fp = freePts(); skillsBtn.textContent = 'SKILLS' + (fp > 0 ? ' (' + fp + ')' : '');
       hudT -= dt; if (hudT <= 0) { hudT = 0.2; drawHud(); }
       drawGps(); drawMini();
+      audioTick(dt);
     } catch (err) { msg.textContent = 'Something went wrong: ' + err.message; }
     requestAnimationFrame(frame);
   }
+
+  /* ---------------- sound: lib/rebirth-audio.js makes the sounds; this decides when ----------------
+     Most sounds come from watching the game's own state each frame (a zombie lunging, dying or noticing you,
+     your gun firing, a reload passing each stage), so the host's zombies and a guest's copies sound the same. */
+  var SND = window.RebirthAudio || { play: function () {}, tick: function () {}, mood: function () {}, listener: function () {}, engine: function () {}, stinger: function () {} };
+  var AU = { shotT: 0, rel: -1, relId: '', swing: true, hp: null, hurtCd: 0, stepPh: 0, carV: 0, inCar: false, coughT: 12, lvl: 0, zs: new WeakMap(), lastBomb: 0 };
+  var BLADE = { knife: 1, machete: 1, axe: 1 }, HEAVY = { sledge: 1, axe: 1, bat: 1 };
+  function sndPos(x, z, y) { return { x: P.x + wd(P.x, x), y: y === undefined ? groundY(x, z) + 1.3 : y, z: P.z + wd(P.z, z) }; }   // across the wrapped map edge too
+  function sfx(name, x, z, o) {
+    o = o || {};
+    if (x === undefined || x === null) { SND.play(name, null, o); return; }
+    if (o.muffle === undefined) o.muffle = wdist(x, z, P.x, P.z) > 3 && !los(P.x, P.z, x, z);
+    SND.play(name, sndPos(x, z, o.y), o);
+  }
+  function zKind(z) { return z.ai || 'walker'; }
+  function audioTick(dt) {
+    var dir = camera.getWorldDirection(camDir2); SND.listener(camera.position.x, camera.position.y, camera.position.z, dir.x, dir.y, dir.z);
+    var menu = !running || paused || menuOpen() || !!openPanel();
+    // music + ambience follow the stealth indicator: hidden, heard, spotted, and a swarm when several hunt you at once
+    var near = 99; zombies.forEach(function (z) { if (z.dead) return; var a = z.aw === undefined ? 1 : z.aw; if (a >= AW_SUS) near = Math.min(near, wdist(z.x, z.z, P.x, P.z)); });
+    var lvl = !running ? 0 : STL.chase >= 3 || (STL.chase && time - (P.shotT || -9) < 4 && near < 18) ? 3 : STL.chase ? 2 : STL.sus ? 1 : 0;
+    SND.mood(lvl, { safe: running && (inSafe || shielded()), menu: menu, inside: running && inBldg(P.x, P.z), hp: P.hp / P.maxHp, tired: running && !drive && STL.out, near: near });
+    SND.tick(dt);
+    if (!running) { SND.engine(false); return; }
+    // your gun
+    if (P.shotT && P.shotT !== AU.shotT) { AU.shotT = P.shotT; var w = W(); if (!w.melee && !w.throw) { SND.play('shot', null, { kind: P.weapon, vol: 0.85 }); if (P.weapon !== 'shotgun') SND.play('shell', null, { delay: 0.25, vol: 0.7 }); } }
+    // reloads: mag out, mag in, then the slide / bolt / pump (a shotgun loads shell by shell)
+    var rp = reloadPhase();
+    if (rp >= 0) {
+      if (AU.rel < 0 || AU.relId !== P.weapon) { AU.rel = 0; AU.relId = P.weapon; if (P.weapon !== 'shotgun') SND.play('magout'); }
+      if (P.weapon === 'shotgun') { for (var q = 1; q <= 4; q++) if (AU.rel < q * 0.18 && rp >= q * 0.18) SND.play('shellin'); }
+      else if (AU.rel < 0.55 && rp >= 0.55) SND.play('magin');
+      if (AU.rel < 0.84 && rp >= 0.84) SND.play('rack', null, { kind: P.weapon });
+      AU.rel = rp;
+    } else AU.rel = -1;
+    // melee swing
+    if (!swingS.done && AU.swing) { var sw = swingS.w || W(); SND.play(sw.throw ? 'throw' : 'swing', null, { kind: HEAVY[P.weapon] ? 'heavy' : '' }); }
+    AU.swing = swingS.done;
+    // your body: footsteps, getting hurt, coughing when infected
+    if (!drive && P.hp > 0) {
+      var stepN = Math.floor(P.phase / Math.PI);
+      if (stepN !== AU.stepPh) { AU.stepPh = stepN; SND.play('step', null, { kind: inBldg(P.x, P.z) ? 'inside' : 'street', crouch: STL.crouch, run: STL.sk > 0.5, vol: 0.55 }); }
+    }
+    AU.hurtCd -= dt;
+    if (AU.hp !== null && P.hp < AU.hp - 0.9 && P.hp > 0 && AU.hurtCd <= 0) { AU.hurtCd = 0.35; SND.play('hurt', null, { vol: Math.min(1, 0.5 + (AU.hp - P.hp) / 25) }); }
+    AU.hp = P.hp;
+    if (AU.silver !== undefined && P.inv.silver !== AU.silver && getComputedStyle(shopPanel).display !== 'none') SND.play('coin');   // buying and selling at the trader
+    AU.silver = P.inv.silver;
+    if (P.inf) { AU.coughT -= dt; if (AU.coughT <= 0) { AU.coughT = rnd(10, 18); SND.play('cough', null, { vol: 0.6 }); } }
+    // the car you're driving: engine, getting in, crashes
+    if (drive) {
+      if (!AU.inCar) { AU.inCar = true; SND.play('door'); SND.play('carstart', null, { delay: 0.2 }); }
+      SND.engine(!drive.broken && drive.fuel > 0, drive.v || 0, null);
+      var dv = Math.abs(AU.carV) - Math.abs(drive.v || 0); if (dv > 4.5) SND.play('crash', null, { vol: Math.min(1, dv / 14) });
+      AU.carV = drive.v || 0;
+    } else { if (AU.inCar) { AU.inCar = false; SND.play('door'); } SND.engine(false); AU.carV = 0; }
+    // zombies: groans while they wander, a call when they notice you, attacks, deaths, heavy Brute steps
+    var vocal = 0;
+    zombies.forEach(function (z) {
+      var d = wdist(z.x, z.z, P.x, P.z); if (d > 70) return;
+      var st = AU.zs.get(z); if (!st) { st = { idle: rnd(1, 8), aw: z.aw || 0, lunge: 0, dead: z.dead, step: 0, ring: 0, x: z.x, z: z.z }; AU.zs.set(z, st); }
+      var k = zKind(z);
+      if (z.dead) { if (!st.dead) { st.dead = true; sfx('z_death', z.x, z.z, { kind: k }); } return; }
+      var aw = z.aw === undefined ? (d < 14 ? 1 : 0) : z.aw;
+      if (aw >= AW_CHASE && st.aw < AW_SUS + 0.05 && !(k === 'stalker' && z.hidden && d > 6)) { sfx('z_alert', z.x, z.z, { kind: k === 'screamer' ? 'walker' : k }); if (k === 'brute' && d < 18) SND.stinger(0.6); }
+      st.aw = aw;
+      var lg = z.lunge || 0; if (lg > 0.9 && st.lunge < 0.5) sfx('z_attack', z.x, z.z, { kind: k }); st.lunge = lg;
+      var rg = z.ring || 0; if (rg > 0.3 && st.ring <= 0.3) { sfx('z_alert', z.x, z.z, { kind: 'screamer', range: 120, vol: 1.2 }); if (d < 30) SND.stinger(0.8); } st.ring = rg;
+      st.idle -= dt;
+      if (st.idle <= 0 && d < 45) { st.idle = k === 'stalker' ? rnd(1.5, 4) : rnd(4, 11) * (aw >= AW_CHASE ? 0.5 : 1); if (vocal < 6 && !(k === 'stalker' && d > 16)) { vocal++; sfx('z_idle', z.x, z.z, { kind: k, vol: k === 'stalker' ? 0.8 : 0.9 }); } }
+      var moved = Math.hypot(z.x - st.x, z.z - st.z); st.x = z.x; st.z = z.z;
+      if ((k === 'brute' && d < 30) || (k === 'runner' && d < 16)) { st.step += moved; var stride = k === 'brute' ? 1.6 : 1.1; if (st.step > stride) { st.step = 0; sfx('z_step', z.x, z.z, { kind: k, vol: k === 'brute' ? 1 : 0.6, y: groundY(z.x, z.z) + 0.1 }); } }
+    });
+  }
+  var camDir2 = new T.Vector3();
+  [['volMaster', 'master'], ['volMusic', 'music'], ['volSfx', 'sfx']].forEach(function (v) {
+    var el = document.getElementById(v[0]), lab = document.getElementById(v[0] + 'N'); if (!el) return;
+    function show() { lab.textContent = el.value + '%'; }
+    el.value = Math.round(((SND.vol || {})[v[1]] === undefined ? 0.8 : SND.vol[v[1]]) * 100); show();
+    el.addEventListener('input', function () { var o = {}; o[v[1]] = el.value / 100; if (SND.volumes) SND.volumes(o); show(); });
+  });
   // live game helpers for mods (Rebirth.game): read the player and zombies, show messages, spawn, give items
   Rebirth.game = {
     get player() { return P; }, get zombies() { return zombies; }, get time() { return time; }, get kills() { return kills; },
