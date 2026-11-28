@@ -22,9 +22,9 @@ json.dump({
     'background_color': '#0b0c0e', 'theme_color': '#0b0c0e',
     'description': 'Zombie survival in a ruined Denver.',
     'icons': [{'src': 'icons/icon-192.png', 'sizes': '192x192', 'type': 'image/png'}, {'src': 'icons/icon-512.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'any maskable'}]
-}, open(os.path.join(root, 'manifest.webmanifest'), 'w'), indent=1)
+}, open(os.path.join(root, 'manifest.json'), 'w'), indent=1)
 p = os.path.join(root, 'index.html'); s = open(p).read()
-tags = ('<link rel="manifest" href="manifest.webmanifest">\n<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n'
+tags = ('<link rel="manifest" href="manifest.json">\n<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n'
         '<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n'
         '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n<meta name="apple-mobile-web-app-title" content="Rebirth">\n'
         '<meta name="theme-color" content="#0b0c0e">\n')
