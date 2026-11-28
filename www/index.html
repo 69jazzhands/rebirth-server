@@ -104,6 +104,10 @@
   #rInfo small { display: block; font-size: 11px; color: #c9c5b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #rSub { position: fixed; left: 50%; bottom: 62px; transform: translateX(-50%); width: min(560px, 60vw); text-align: center; font-size: 13px; line-height: 1.35; color: #e8e4d8; text-shadow: 0 1px 3px #000, 0 0 8px #000; pointer-events: none; z-index: 3; opacity: 0; transition: opacity .4s; }
   #rSub b { color: #f2c14e; font-weight: 600; }
+  #eggNote { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 20; background: #000a; }
+  #eggNote .card { max-width: 420px; margin: 16px; background: #e9e1c8; color: #2a2620; border-radius: 6px; padding: 18px 20px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; box-shadow: 0 10px 40px #000; transform: rotate(-1deg); }
+  #eggNote .card p { white-space: pre-line; margin: 0 0 12px; color: #2a2620; }
+  #eggNote button { background: #2a2620; color: #e9e1c8; border: 0; border-radius: 4px; padding: 9px 16px; font-family: inherit; font-size: 14px; }
   .ptag { position: fixed; left: 0; top: 0; width: 80px; margin-left: -40px; pointer-events: none; z-index: 2; display: none; }
   .ptag .hpnum { color: #9fe0b0; }
   #mpName { width: 100%; box-sizing: border-box; background: #0e1110; color: #e8e4d8; border: 1px solid #3a423d; border-radius: 8px; padding: 10px; font-size: 15px; margin: 4px 0 8px; }
@@ -224,6 +228,7 @@
 <button class="tbtn" id="wallBtn" data-key="X">WALL</button>
 <button class="tbtn" id="radioBtn" data-key="Y">RADIO</button>
 <div id="rSub"></div>
+<div id="eggNote"><div class="card"><p id="eggText"></p><button id="eggOk">Fold it away</button></div></div>
 <div id="radio"><button id="rPrev" aria-label="Previous station">&lsaquo;</button><div id="rInfo"><b id="rName"></b><small id="rNow"></small></div><button id="rNext" aria-label="Next station">&rsaquo;</button><button id="rOff">OFF</button></div>
 
 <div class="panel" id="intro" style="display:flex"><div class="card">
@@ -2020,8 +2025,8 @@ Rebirth.start(function () {
      when the player completes that task. Once unlocked (saved on this device), the SKILLS menu lets the player
      put points into one more class on top of their first, with its own ultimate. Respec clears the second class too. */
   var DUAL_CLASS = {
-    enabled: false,
-    task: '',   // what the player has to do, shown in SKILLS once enabled; fill in with the reward task
+    enabled: true,
+    task: 'Listen to the counting.',   // the hunt is in the egg block below (search EGG); never shown to players
     unlocked: function () { if (!this.enabled) return false; try { return localStorage.getItem('rebirthDual') === '1'; } catch (e) { return false; } },
     unlock: function () { if (!this.enabled) return; try { localStorage.setItem('rebirthDual', '1'); } catch (e) {} say('Secret unlocked: you can now master a second class. Open SKILLS.'); }
   };
@@ -2859,6 +2864,7 @@ Rebirth.start(function () {
   // ---- one INTERACT button for cars, the trader, a forge and your settlement ----
   function interactTarget() {
     if (drive) return ['EXIT', useCarBtn];
+    if (eggNear()) return ['OPEN', eggOpen];
     if (nearCar) return [whyDead(nearCar) ? (canFix(nearCar) ? 'REPAIR' : 'WRECK') : 'DRIVE', useCarBtn];
     if (tradeBtn.style.display !== 'none') return ['TRADE', function () { tradeBtn.click(); }];
     if (forgeBtn.style.display !== 'none') return ['FORGE', function () { forgeBtn.click(); }];
@@ -2935,7 +2941,7 @@ Rebirth.start(function () {
   viewBtn.addEventListener('click', toggleView); lightBtn.addEventListener('click', toggleLight);
   window.addEventListener('keydown', function (e) {
     var k = e.key.toLowerCase(); keys[k] = true; if (k === ' ') e.preventDefault();
-    if (k === 'e' && !e.repeat && !paused) { if (!drive && !nearCar && tradeBtn.style.display === 'none' && forgeBtn.style.display !== 'none') forgeBtn.click(); else useCarBtn(); }
+    if (k === 'e' && !e.repeat && !paused && eggNear()) { eggOpen(); } else if (k === 'e' && !e.repeat && !paused) { if (!drive && !nearCar && tradeBtn.style.display === 'none' && forgeBtn.style.display !== 'none') forgeBtn.click(); else useCarBtn(); }
     if (k === 't' && !e.repeat) deployTurret();
     if (k === 'y' && !e.repeat && running) radioToggle(); if (k === 'n' && !e.repeat && running) radioTune(e.shiftKey ? -1 : 1);
     if (k === 'q' && !e.repeat && !paused) switchWeapon(); if (k === 'r' && !e.repeat && !paused && running) manualReload(); if (k === 'h' && !e.repeat) useMed();
@@ -4194,6 +4200,7 @@ Rebirth.start(function () {
   document.getElementById('closeShop').addEventListener('click', function () { shopPanel.style.display = 'none'; paused = false; });
   var onRescue = function () {};
   function onDeath() {
+    eggDied();
     SND.play('death'); SND.stinger(1);
     if (pm('m4') && !(P.windT > 0) && !drive) { P.windT = 180; P.hp = Math.max(1, maxHpNow() * pm('m4')); P.inf = null; say('Second wind! You get back up.'); return; }
     paused = true; releaseKeys(); if (drive) exitCar();
@@ -4630,7 +4637,7 @@ Rebirth.start(function () {
 
   /* ---------- menu bubble: while any menu, inventory/trunk, trader/forge, skills or base screen is open
      (and for 1.5 s after), nothing can hurt you and zombies are pushed out of a small bubble around you ---------- */
-  var SHIELD_R = 4.5, SHIELD_LINGER = 1.5, MENU_IDS = ['menuPanel', 'invPanel', 'shopPanel', 'skillsPanel', 'basePanel'];
+  var SHIELD_R = 4.5, SHIELD_LINGER = 1.5, MENU_IDS = ['menuPanel', 'invPanel', 'shopPanel', 'skillsPanel', 'basePanel', 'eggNote'];
   P.shieldT = 0;
   function menuUp() { for (var i = 0; i < MENU_IDS.length; i++) { var el = document.getElementById(MENU_IDS[i]); if (el && el.style.display === 'flex') return true; } return false; }
   var shieldUntil = 0;
@@ -5289,7 +5296,7 @@ Rebirth.start(function () {
   if (CONSOLE) setPadMode(true);
   function deadz(v) { return Math.abs(v) < 0.22 ? 0 : Math.max(-1, Math.min(1, (v - Math.sign(v) * 0.22) / 0.78)); }
   function openPanel() {
-    var ids = ['menuPanel', 'invPanel', 'shopPanel', 'skillsPanel', 'basePanel', 'over', 'loadErr', 'intro'];
+    var ids = ['menuPanel', 'invPanel', 'shopPanel', 'skillsPanel', 'basePanel', 'eggNote', 'over', 'loadErr', 'intro'];
     for (var i = 0; i < ids.length; i++) { var el = document.getElementById(ids[i]); if (el && getComputedStyle(el).display !== 'none') return el; }
     return null;
   }
@@ -5405,7 +5412,7 @@ Rebirth.start(function () {
     pad.focus = -1;
     yaw -= pad.rx * 2.6 * dt * lookSens(); pitch = Math.max(-1.1, Math.min(0.75, pitch - pad.ry * 1.8 * dt * lookSens()));
     pad.fire = pad.rt > 0.3 && !drive;
-    if (e[0]) { if (drive || nearCar) useCarBtn(); else if (tradeBtn.style.display !== 'none') tradeBtn.click(); else if (forgeBtn.style.display !== 'none') forgeBtn.click(); }
+    if (e[0]) { if (!drive && eggNear()) eggOpen(); else if (drive || nearCar) useCarBtn(); else if (tradeBtn.style.display !== 'none') tradeBtn.click(); else if (forgeBtn.style.display !== 'none') forgeBtn.click(); }
     if (e[1]) useMed();
     if (e[2]) switchWeapon();
     if (e[11]) manualReload();
@@ -5469,7 +5476,7 @@ Rebirth.start(function () {
       var fp = freePts(); skillsBtn.textContent = 'SKILLS' + (fp > 0 ? ' (' + fp + ')' : '');
       hudT -= dt; if (hudT <= 0) { hudT = 0.2; drawHud(); }
       drawGps(); drawMini();
-      audioTick(dt); radioTick(dt);
+      audioTick(dt); radioTick(dt); eggTick(dt);
     } catch (err) { msg.textContent = 'Something went wrong: ' + err.message; }
     requestAnimationFrame(frame);
   }
@@ -5583,6 +5590,101 @@ Rebirth.start(function () {
     document.getElementById('mRadioPrev').addEventListener('click', function () { radioTune(-1); });
     document.getElementById('mRadioNext').addEventListener('click', function () { radioTune(1); });
     radioShowName();
+  }
+
+  /* ---------------- Easter egg: the Counting Station (secret; the reward is DUAL_CLASS) ----------------
+     1. Decode: every day 4.6 MHz reads five groups and repeats one. In that group the first digit is a street counted
+        from the west (Osage St = 0), the second an avenue counted from the north (Bayaud Ave = 0). Hints: Eyes in the Sky and the CB.
+     2. Find: a dead drop sits at a corner of that crossing. Tuned to 4.6, the static clears and a ping quickens near it.
+     3. Hunt: one rare part from each special zombie (Runner, Brute, Screamer, Stalker, Spitter), brought back in ONE life.
+        Dying sends you back to step 1.
+     4. Hold: deliver them and the station counts down two minutes while the dead come for the drop. Stay within 30 m.
+        Leaving gives the parts back (try again); dying starts over. Survive and the second class unlocks.
+     Progress is saved on the device (rebirthEgg). Only the player running the zombies can start step 4. */
+  var EGG_PARTS = ['runner', 'brute', 'screamer', 'stalker', 'spitter'];
+  var EGG = (function () { try { return JSON.parse(localStorage.getItem('rebirthEgg') || 'null') || { stage: 0 }; } catch (e) { return { stage: 0 }; } })();
+  var eggBox = null, eggStand = null;
+  function eggSave() { try { localStorage.setItem('rebirthEgg', JSON.stringify(EGG)); } catch (e) {} }
+  function eggToday() { return Math.floor(Date.now() / 86400000); }
+  var EGG_NS = Object.keys(Rebirth.content.streets.ns).map(Number).sort(function (a, b) { return a - b; });   // west to east
+  var EGG_EW = Object.keys(Rebirth.content.streets.ew).map(Number).sort(function (a, b) { return a - b; });   // north to south
+  function eggRand(day) { var seed = (day * 2654435761) >>> 0; return function () { seed = (seed + 0x6D2B79F5) | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function eggSpec(day) {
+    var r = eggRand(day), a, b;
+    do { a = Math.floor(r() * 10); b = Math.floor(r() * 10); } while (Math.abs(EGG_NS[a]) < 30 && Math.abs(EGG_EW[b]) < 30);   // never at the safe zone in the middle
+    var groups = [], key = Math.floor(r() * 5), q = Math.floor(r() * 4);
+    for (var i = 0; i < 5; i++) { var g = ''; for (var d = 0; d < 5; d++) g += Math.floor(r() * 10); groups.push(g); }
+    groups[key] = '' + a + b + groups[key].slice(2);
+    // on the corner sidewalk, outdoors: start at the corner and step in toward the crossing until it's clear of walls and rooms
+    var sx = q & 1 ? 1 : -1, sz = q & 2 ? 1 : -1, x = EGG_NS[a] + sx * 6, z = EGG_EW[b] + sz * 6;
+    for (var tries = 0; tries < 14 && (blocked(x, 0.4, z) || inBldg(x, z)); tries++) { x -= sx * 0.5; z -= sz * 0.5; }
+    return { groups: groups, key: key, x: x, z: z, street: Rebirth.content.streets.ns[EGG_NS[a]], ave: Rebirth.content.streets.ew[EGG_EW[b]] };
+  }
+  if (RAD) RAD.numbersFn = function (day) { return eggSpec(day); };
+  function eggSpot() { if (EGG.stage >= 2 && EGG.stage < 4 && EGG.x !== undefined) return { x: EGG.x, z: EGG.z }; var sp = eggSpec(eggToday()); return { x: sp.x, z: sp.z }; }
+  function eggMakeBox() {
+    var g = new T.Group(), can = new T.Mesh(boxGeo(0.5, 0.3, 0.26), mat(0x4a5236)); can.position.y = 0.15; can.castShadow = true; g.add(can);
+    var lid = new T.Mesh(boxGeo(0.52, 0.04, 0.28), mat(0x3c432b)); lid.position.y = 0.32; g.add(lid);
+    var ant = new T.Mesh(new T.CylinderGeometry(0.008, 0.008, 0.7, 5), mat(0x222222)); ant.position.set(0.18, 0.66, 0.05); ant.rotation.z = -0.15; g.add(ant);
+    var led = new T.Mesh(boxGeo(0.03, 0.03, 0.03), new T.MeshBasicMaterial({ color: 0xff3020 })); led.position.set(-0.17, 0.36, 0.1); g.add(led);
+    g.userData.led = led; scene.add(g); return g;
+  }
+  function eggNear() { if (!running || drive || EGG.stage >= 4 || eggStand) return false; var s = eggSpot(); return wdist(s.x, s.z, P.x, P.z) < 2.2; }
+  function eggNote(txt) { document.getElementById('eggText').textContent = txt; document.getElementById('eggNote').style.display = 'flex'; paused = true; releaseKeys(); SND.play('metalpick'); }
+  document.getElementById('eggOk').addEventListener('click', function () { document.getElementById('eggNote').style.display = 'none'; paused = false; });
+  function eggHave() { var I = P.inv; return EGG_PARTS.filter(function (k) { return (I.parts[k] || 0) > 0; }); }
+  function eggOpen() {
+    var s = eggSpot();
+    if (EGG.stage < 2) {
+      EGG.stage = 2; EGG.x = s.x; EGG.z = s.z; eggSave();
+      eggNote("Inside the tin: a battered field radio, still warm, tuned to 4.6.\nA note in pencil:\n\nYou can count. Good.\nNow show me you can survive.\nFive kinds of them carry what I need: the fast, the big, the loud, the hidden and the sick. One piece from each.\nBring them here. In one life.\nIf you die, I'll know.\n\n- 4.6");
+      return;
+    }
+    if (EGG.stage === 2) {
+      var have = eggHave();
+      if (have.length < EGG_PARTS.length) { var miss = EGG_PARTS.filter(function (k) { return have.indexOf(k) < 0; }).map(function (k) { return PARTNAME[k]; }); eggNote('The tin is empty except for the note.\nStill missing:\n' + miss.join('\n') + '\n\n- 4.6'); return; }
+      if (NET.on && !NET.host) { eggNote("The radio crackles: 'Not with company. Come back when it's your city.'\n\n(Play solo or host the game to finish this.)"); return; }
+      EGG_PARTS.forEach(function (k) { P.inv.parts[k]--; if (!P.inv.parts[k]) delete P.inv.parts[k]; });
+      EGG.stage = 3; eggSave();
+      eggNote("You drop the five pieces in the tin. The radio stops hissing.\nA voice, very close:\n\n'Now hold this spot until I finish counting.\nDon't wander off.'");
+      document.getElementById('eggOk').addEventListener('click', eggStartStand, { once: true });
+      return;
+    }
+    if (EGG.stage === 3) eggStartStand();
+  }
+  var EGG_WORDS = ['', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'one hundred', 'one hundred ten', 'one hundred twenty'];
+  function eggStartStand() {
+    if (eggStand) return;
+    var s = eggSpot(); eggStand = { t: 120, out: 0, wave: 3, said: 13, x: s.x, z: s.z };
+    if (RAD) { var ni = -1; RAD.list.forEach(function (st, i) { if (st.kind === 'numbers') ni = i; }); if (ni >= 0) { RAD.announce('Counting.', ni); radioEl.classList.add('on'); radioShowName(); } }
+    if (RAD) RAD.hold = true; SND.stinger(1); say('Hold the drop. Stay close.');
+  }
+  function eggSpawnWave() {
+    var n = 3 + Math.floor((120 - eggStand.t) / 30), types = ['walker', 'walker', 'runner', 'brute', 'screamer', 'spitter', 'stalker'];
+    for (var i = 0; i < n; i++) { var z = spawnZombie(types[Math.floor(Math.random() * types.length)], eggStand.x, eggStand.z, 14, 24) || spawnZombie('walker', P.x, P.z, 12, 20); if (z) { z.aw = 1; z.hx = P.x; z.hz = P.z; } }
+  }
+  function eggDied() {
+    if (eggStand) { eggStand = null; if (RAD) RAD.hold = false; }
+    if (EGG.stage === 2 || EGG.stage === 3) { EGG = { stage: 0 }; eggSave(); setTimeout(function () { say('Static on 4.6. Somebody stopped counting for you.'); }, 4000); }
+  }
+  function eggTick(dt) {
+    if (EGG.stage >= 4 || !running) { if (eggBox) eggBox.visible = false; if (RAD) RAD.homing = 0; return; }
+    var s = eggSpot(), d = wdist(s.x, s.z, P.x, P.z);
+    if (d < 120) { if (!eggBox) eggBox = eggMakeBox(); eggBox.visible = true; eggBox.position.set(P.x + wd(P.x, s.x), groundY(s.x, s.z), P.z + wd(P.z, s.z)); eggBox.userData.led.visible = (time % 1.2) < 0.15; }
+    else if (eggBox) eggBox.visible = false;
+    if (RAD) { var tuned = RAD.on && RAD.station() && RAD.station().kind === 'numbers'; RAD.homing = tuned && d < 70 ? Math.pow(1 - d / 70, 1.4) : 0; }
+    if (!eggStand) return;
+    var S2 = eggStand; S2.t -= dt;
+    var away = wdist(S2.x, S2.z, P.x, P.z) > 30;
+    if (away) { S2.out += dt; if (S2.out > 5) { eggStand = null; if (RAD) RAD.hold = false; EGG_PARTS.forEach(function (k) { P.inv.parts[k] = (P.inv.parts[k] || 0) + 1; }); EGG.stage = 2; eggSave(); say('You left the drop. The pieces are back in your bag. Try again.'); if (RAD) RAD.announce('Counting stopped.'); return; } if (msgT <= 0) say('Get back to the drop!'); }
+    else S2.out = 0;
+    S2.wave -= dt; if (S2.wave <= 0) { S2.wave = 9; eggSpawnWave(); }
+    var tens = Math.ceil(S2.t / 10); if (tens < S2.said && S2.t > 0) { S2.said = tens; if (RAD && tens > 0) RAD.announce(EGG_WORDS[tens] + '.'); }
+    if (S2.t <= 0) {
+      eggStand = null; if (RAD) RAD.hold = false; EGG.stage = 4; eggSave(); DUAL_CLASS.unlock(); SND.play('levelup');
+      if (RAD) RAD.announce('Zero. End of counting. Not bad. Most people can barely be one thing. You can be two.');
+      eggNote("The counting stops.\nThe tin's radio clicks off for good. Taped under the lid:\n\nMost people can barely be one thing.\nYou can be two.\n\n- 4.6\n\n(Secret unlocked: open SKILLS and put points into a second class.)");
+    }
   }
   function radioTick(dt) {
     if (!RAD) return;

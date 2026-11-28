@@ -1,6 +1,6 @@
 {
-"version": "0.9.9",
-"build": 202611281827,
+"version": "0.9.10",
+"build": 202611281840,
 "files": {
 "MODDING.md": [
 9109,
@@ -315,8 +315,8 @@
 "c1deb62bf0ad39e33588cb9858ed4705bf352eaba712bc3bfa89378a290ab17d"
 ],
 "content/radio/stations.js": [
-18075,
-"34acfac77124328a63eaee29ebf44b2dfae3d21550af7725175bcf514eef0aad"
+18523,
+"3ee6072a6d3c1a2e5b4119f8090af8dba2e671e5b447a15134441b445a12ef8d"
 ],
 "content/world/building-themes.js": [
 1260,
@@ -371,8 +371,8 @@
 "b1d4a9eb569f1c86dfc5c623c2c95fe0d37078d17f22e2e0ecebf1b941ef48d6"
 ],
 "index.html": [
-474559,
-"b3eac3b1ba9f6ef5debf6bb5708b1fd876c53ab7e499fa13cc6a786e7841b7d0"
+484409,
+"42d54896bae6fddcae7dddf0954b48d96dd95a68cbb1f666a72f7410d6c3a20f"
 ],
 "lib/basis/basis_transcoder.js": [
 57529,
@@ -391,8 +391,8 @@
 "b1ca7c1ead75a70b9097fdeae5e8bd25d234011871a323e1ccaf8138d88f7bb5"
 ],
 "lib/rebirth-audio.js": [
-64585,
-"c94c7c235473c762d3751f83ee49fe628077323a64915b2d46e6ce34c97aa80b"
+65775,
+"0bce6b1d267b52ea13908d5f75ea04e29d49fae6c2cc16eeefde79671529ccce"
 ],
 "lib/three-r187.js": [
 1023045,

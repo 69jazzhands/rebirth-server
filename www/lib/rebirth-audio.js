@@ -606,8 +606,14 @@
     for (var i = 0; i < order.length; i++) { var k = order[i]; if (c[k] && s.when[k] && (!rCool[k] || now - rCool[k] > (k === 'horde' || k === 'lowhp' ? 40000 : 90000))) { rCool[k] = now; return bag(s.id + k, s.when[k]); } }
     return null;
   }
+  radio.homing = 0; var pingT = 0;
   radio.update = function (dt) {
     var s = st(); if (!radio.on || !s || !rIn) return;
+    if (s.kind === 'numbers' && radio.hold) { if (!rSpeaking) rGap = 1; }
+    if (s.kind === 'numbers') {
+      rStatic.gain.setTargetAtTime(((1 - (s.signal || 0.8)) * 0.16 + 0.012) * (1 - 0.85 * radio.homing), ctx.currentTime, 0.3);
+      if (radio.homing > 0.02) { pingT -= dt; if (pingT <= 0) { pingT = 1.8 - 1.55 * radio.homing; var po = osc('sine', 1480, ctx.currentTime, 0.12), pe = env(ctx.currentTime, 0.004, 0.05 + 0.12 * radio.homing, 0.1); po.connect(pe); pe.connect(rIn); } }
+    }
     rOut.gain.setTargetAtTime(radio.car ? 1 : 0.8, ctx.currentTime, 0.2);
     var t = ctx.currentTime;
     if (rCrackle && Math.random() < dt * 6) burst(t, { type: 'highpass', f: 2500, dur: 0.004, g: rCrackle.k * 3 }).connect(rIn);
@@ -643,8 +649,15 @@
       squelch(t); setTimeout(function () { if (radio.on && st() === s) sayLine(s, c, function () { roger(ctx.currentTime); rGap = R(4, 12); }); }, 300);
       rGap = 99;
     } else if (s.kind === 'numbers') {
-      if (!rNum) { var day = Math.floor(Date.now() / 86400000), rr = rng(hash('numbers:' + day)), groups = []; for (var g = 0; g < 5; g++) { var grp = []; for (var d = 0; d < 5; d++) grp.push(Math.floor(rr() * 10)); groups.push(grp.join(', ')); }
-        rNum = { q: ['chime', s.lines[0], s.lines[1]].concat(groups, [s.lines[3]], groups, [s.lines[2], 'pause']), i: 0 }; }
+      if (!rNum) {
+        // today's message: five groups, one of them read twice (the game decides which, and what it means)
+        var day = Math.floor(Date.now() / 86400000), spec = radio.numbersFn ? radio.numbersFn(day) : null, groups = [], key = 0;
+        if (spec) { groups = spec.groups.map(function (g) { return g.split('').join(', '); }); key = spec.key; }
+        else { var rr = rng(hash('numbers:' + day)); for (var g = 0; g < 5; g++) { var grp = []; for (var d = 0; d < 5; d++) grp.push(Math.floor(rr() * 10)); groups.push(grp.join(', ')); } }
+        var q = ['chime', s.lines[0], s.lines[1]];
+        groups.forEach(function (g, i) { q.push(g); if (i === key) q.push(s.lines[3] || 'I repeat.', g); });
+        rNum = { q: q.concat([s.lines[2], 'pause']), i: 0 };
+      }
       var item = rNum.q[rNum.i++]; if (rNum.i >= rNum.q.length) rNum.i = 0;
       if (item === 'chime') { rGap = chime(t) + 0.5; return; }
       if (item === 'pause') { rGap = 12; radio.text('', true); return; }
@@ -665,6 +678,11 @@
   radio.tune = function (dir) { if (!radio.list.length) return; radio.idx = (radio.idx + dir + radio.list.length) % radio.list.length; if (radio.on) tuneIn(); };
   radio.volume = function (v) { A.vol.radio = v; if (A._radioBus) A._radioBus.gain.setTargetAtTime(v, ctx.currentTime, 0.05); try { localStorage.setItem('rebirthVol', JSON.stringify(A.vol)); } catch (e) {} };
   radio.station = st;
+  radio.announce = function (text, idx) {
+    if (idx !== undefined && (!radio.on || radio.idx !== idx)) { radio.power(true, idx); }
+    if (!radio.on) return;
+    stopSpeech(); rGap = 99; sayLine(st(), text, function () { rGap = 2.5; });
+  };
   radio._state = function () { return { song: rSong && { title: rSong.title, beat: rSong.nextB, t: ctx.currentTime - rSong.t0, len: rSong.len }, gap: rGap, say: rSay, speaking: rSpeaking }; };
 
   /* ---------- per-frame: music, ambience, menus ---------- */
